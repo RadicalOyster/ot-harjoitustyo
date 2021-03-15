@@ -1,0 +1,13 @@
+kurssit
+└── ot2020
+    └── viikko1
+        └── unicafe
+            ├── Pipfile
+            ├── Pipfile.lock
+            └── src
+                ├── index.py
+                ├── kassapaate.py
+                ├── maksukortti.py
+                └── tests
+                    ├── __init__.py
+                    └── maksukortti_test.py

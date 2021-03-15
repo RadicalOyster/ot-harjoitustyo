@@ -1,0 +1,125 @@
+$ git log --stat | cat
+commit 05c03325d4751f823d91c5355661252b4922c187
+Author: Arne Karila <arne.karila@gmail.com>
+Date:   Mon Mar 15 19:29:09 2021 +0200
+
+    file1 poistettu, file2 uudelleennimetty
+
+ ot_viikko1/tiedostoja/file2             | 0
+ ot_viikko1/tiedostoja/{file1 => file22} | 0
+ 2 files changed, 0 insertions(+), 0 deletions(-)
+
+commit 1c3f58b36a9d0ab646c7d9b70c03752eded49271
+Author: Arne Karila <arne.karila@gmail.com>
+Date:   Mon Mar 15 19:22:45 2021 +0200
+
+    Mokailtiin
+
+ ot_viikko1/tiedostoja/file2 | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+
+commit 3065e83da4e33cb62138267389b1c8b7ef5367da
+Author: Arne Karila <arne.karila@gmail.com>
+Date:   Mon Mar 15 19:20:28 2021 +0200
+
+    poistettiin file2, muutettiin file1 sisältöä
+
+ ot_viikko1/tiedostoja/file2 | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+
+commit e1f7b72597ec15d1f273fae508bf3311577d114d
+Author: Arne Karila <arne.karila@gmail.com>
+Date:   Mon Mar 15 19:18:17 2021 +0200
+
+    file1, file2, file3 luotu
+
+ ot_viikko1/tiedostoja/file1 | 0
+ ot_viikko1/tiedostoja/file2 | 0
+ ot_viikko1/tiedostoja/file3 | 0
+ 3 files changed, 0 insertions(+), 0 deletions(-)
+
+commit 6840a0f8f76f7f8bb9713c6206f97545255c9a91
+Author: Arne Karila <arne.karila@gmail.com>
+Date:   Mon Mar 15 19:14:34 2021 +0200
+
+    git add -p testaus
+
+ ot_viikko1/eka.txt    | 2 ++
+ ot_viikko1/kolmas.txt | 1 +
+ 2 files changed, 3 insertions(+)
+
+commit b5b66563bc7991cf0a7448fddd3612c99bf23de6
+Author: Arne Karila <arne.karila@gmail.com>
+Date:   Mon Mar 15 19:12:39 2021 +0200
+
+    tiedosto.txt nimenmuutos
+
+ ot_viikko1/{tiedosto.txt => eka.txt} | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+
+commit 1d36c013674b521248dbb2d6707d0373834e4460
+Author: Arne Karila <arne.karila@gmail.com>
+Date:   Mon Mar 15 19:11:34 2021 +0200
+
+    toinen.txt poistettu
+
+ ot_viikko1/toinen.txt | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit 4b039121f7a8f800c41e27f2d87d85705f3f5046
+Author: Arne Karila <arne.karila@gmail.com>
+Date:   Mon Mar 15 19:10:02 2021 +0200
+
+    Tiedostot siirretty oikeaan hakemistoon
+
+ kolmas.txt => ot_viikko1/kolmas.txt     | 0
+ tiedosto.txt => ot_viikko1/tiedosto.txt | 0
+ toinen.txt => ot_viikko1/toinen.txt     | 0
+ 3 files changed, 0 insertions(+), 0 deletions(-)
+
+commit e0dda8023a8058b493ced436440d72aa5f6ee086
+Author: Arne Karila <arne.karila@gmail.com>
+Date:   Mon Mar 15 19:09:02 2021 +0200
+
+    tiedosto.txt lisää muunnoksia
+
+ tiedosto.txt | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+commit 8c5ed0d53541e8cf9b140ac05b4d8b1a01fd1393
+Author: Arne Karila <arne.karila@gmail.com>
+Date:   Mon Mar 15 16:23:35 2021 +0200
+
+    Tiedosto.txt muutettu
+
+ tiedosto.txt | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+commit aaf19a632e9b68c1d02003d9ae87c2051a72d5f0
+Author: Arne Karila <arne.karila@gmail.com>
+Date:   Mon Mar 15 16:19:58 2021 +0200
+
+    Kolmas.txt luotu, toinen.txt editoitu
+
+ kolmas.txt | 1 +
+ toinen.txt | 1 +
+ 2 files changed, 2 insertions(+)
+
+commit f53ad74cdfcdbaf7a42c21dad8e88740b1cb10ff
+Author: Arne Karila <arne.karila@gmail.com>
+Date:   Mon Mar 15 16:17:53 2021 +0200
+
+    Tiedosto.txt ja toinen.txt
+
+ tiedosto.txt | 1 +
+ toinen.txt   | 0
+ 2 files changed, 1 insertion(+)
+
+commit a902955de206a35c9e3c5e56b889b40ea37f73f9
+Author: Arne Karila <arne.karila@gmail.com>
+Date:   Mon Mar 15 16:15:44 2021 +0200
+
+    tiedosto.txt luotu
+
+ tiedosto.txt | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
