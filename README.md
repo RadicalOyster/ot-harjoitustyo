@@ -9,3 +9,5 @@
 [komentorivi.txt](https://github.com/RadicalOyster/ot-harjoitustyo/blob/master/laskarit/viikko1/komentorivi.txt)
 
 ## Viikko 2
+
+Some nonsense text
