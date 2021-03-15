@@ -1,3 +1,4 @@
+Epäsynkrooni
 $ git log --stat | cat
 commit 05c03325d4751f823d91c5355661252b4922c187
 Author: Arne Karila <arne.karila@gmail.com>
