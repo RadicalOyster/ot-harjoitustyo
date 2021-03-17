@@ -1,5 +1,7 @@
 # Ohjelmistotekniikka, kevät 2021
 
+![](https://github.com/RadicalOyster/ot-harjoitustyo/blob/master/screenshot.png)
+
 # Generic strategy game
 This project is a simple turn based strategy game in which units move across a grid to do battle in the style of [Fire Emblem](https://en.wikipedia.org/wiki/Fire_Emblem:_Shadow_Dragon_and_the_Blade_of_Light). More thorough documentation to come.
 
