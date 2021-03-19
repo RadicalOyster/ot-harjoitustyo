@@ -50,7 +50,7 @@ units.append(Unit(1,1))
 units.append(Unit(5,3,Alignment.ENEMY))
 
 clock = Clock()
-
+test = pygame.Surface((640,640))
 pygame.init()
 
 while running:
@@ -95,7 +95,8 @@ while running:
         #If player has not selected a unit and there is a unit on the tile, select that unit if it is an active ally and display its movement range
                 else:
                     if unit is not None and unit.alignment is Alignment.ALLY and unit.has_moved == False:
-                        movementdisplay.UpdateMovementTiles(cursor.position_x, cursor.position_y)
+                        movementdisplay.UpdateMovementTiles(cursor.position_x, cursor.position_y, unit)
+                        movementdisplay.UpdateAttackTiles(cursor.position_x, cursor.position_y, unit)
                         cursor.selectedUnit = unit
 
         #If X is pressed, clear selected unit
@@ -110,12 +111,17 @@ while running:
                     unit.activate()
         
     screen.fill((24, 184, 48))
-    sprite_renderer.update(cursor, movementdisplay.GetMovementRange(), units)
-    sprite_renderer.all_sprites.draw(screen)
+    sprite_renderer.update(cursor, units, movementdisplay.GetMovementRange(), movementdisplay.GetAttackRange())
+    sprite_renderer.overlays.draw(screen)
+    sprite_renderer.sprites.draw(screen)
     screen.blit(cursor.surf, cursor.rect)
     pygame.display.flip()
 
     for unit in units:
         unit.updateAnimation()
+    for tile in movementdisplay.GetMovementRange():
+        tile.updateAnimation()
+    for tile in movementdisplay.GetAttackRange():
+        tile.updateAnimation()
 
 pygame.quit()

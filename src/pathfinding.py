@@ -1,7 +1,7 @@
 import sys
 from heapdict import heapdict
 
-def GetMovementRange(cursorX, cursorY):
+def GetMovementRange(cursorX, cursorY, movement):
     map = [
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -15,7 +15,6 @@ def GetMovementRange(cursorX, cursorY):
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     ]
 
-    movement = 3
     rows = len(map)
     columns = len(map[0])
 
@@ -73,7 +72,7 @@ def GetMovementRange(cursorX, cursorY):
 
     #PrintMovementRange(distance, 5)
 
-    def ReturnMovementRange():
+    def ReturnMovementRange(movement):
         movableSpaces = []
         for i in range(0,len(map)):
             for j in range(0,len(map[0])):
@@ -83,4 +82,4 @@ def GetMovementRange(cursorX, cursorY):
                     movableSpaces.append((i,j))
         return movableSpaces
     
-    return ReturnMovementRange()
+    return ReturnMovementRange(movement)

@@ -9,14 +9,15 @@ class Alignment(Enum):
 sprite_suffixes = ["", "_e"]
 
 class Unit(pygame.sprite.Sprite):
-    def __init__(self, x=0, y=0, alignment=Alignment.ALLY):
+    def __init__(self, x=0, y=0, alignment=Alignment.ALLY, hp=15):
         super().__init__()
 
         self.unit_class = "fighter"
-        self.movement = 3
+        self.movement = 2
         self.sprites = []
         self.active_sprite = 0
         self.alignment = alignment
+        self.hp = hp
         self.sprites.append(load_image("fighter_1" + sprite_suffixes[self.alignment.value] + ".png"))
         self.sprites.append(load_image("fighter_2" + sprite_suffixes[self.alignment.value] + ".png"))
         self.sprites.append(load_image("fighter_3" + sprite_suffixes[self.alignment.value] + ".png"))
@@ -27,6 +28,9 @@ class Unit(pygame.sprite.Sprite):
         self.sprites.append(load_image("fighter_1" + sprite_suffixes[self.alignment.value] + ".png"))
         self.image = pygame.transform.scale(self.sprites[self.active_sprite], (64, 64))
         self.has_moved = False
+
+        #temporary until weapons are implemented
+        self.range = 1
 
 
         self.position_x = x
