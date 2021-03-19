@@ -38,7 +38,6 @@ cursor = Cursor()
 sprite_renderer = SpriteRenderer()
 movementdisplay = MovementDisplay()
 
-testShit = pygame.sprite.Group()
 units = []
 units.append(Unit(1,1))
 
