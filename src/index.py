@@ -7,11 +7,6 @@ from sprite_renderer import SpriteRenderer
 from unit import Unit
 import os
 
-def load_image(filename):
-    return pygame.image.load(
-        os.path.join(dirname, "assets", filename)
-    )
-
 dirname = os.path.dirname(__file__)
 
 pygame.init()
