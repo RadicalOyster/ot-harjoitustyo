@@ -1,5 +1,6 @@
 import pygame
 
+#Class that contains all sprites to be drawn
 class SpriteRenderer(pygame.sprite.Sprite):
     def __init__(self):
         super(SpriteRenderer, self).__init__()

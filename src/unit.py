@@ -1,23 +1,32 @@
 import pygame
 from utility_functions import load_image
+from enum import Enum
+
+class Alignment(Enum):
+    ALLY = 0
+    ENEMY = 1
+
+sprite_suffixes = ["", "_e"]
 
 class Unit(pygame.sprite.Sprite):
-    def __init__(self, x=0, y=0):
+    def __init__(self, x=0, y=0, alignment=Alignment.ALLY):
         super().__init__()
 
         self.unit_class = "fighter"
         self.movement = 3
         self.sprites = []
-        self.sprites.append(load_image("fighter_1.png"))
-        self.sprites.append(load_image("fighter_2.png"))
-        self.sprites.append(load_image("fighter_3.png"))
-        self.sprites.append(load_image("fighter_3.png"))
-        self.sprites.append(load_image("fighter_3.png"))
-        self.sprites.append(load_image("fighter_3.png"))
-        self.sprites.append(load_image("fighter_2.png"))
-        self.sprites.append(load_image("fighter_1.png"))
         self.active_sprite = 0
+        self.alignment = alignment
+        self.sprites.append(load_image("fighter_1" + sprite_suffixes[self.alignment.value] + ".png"))
+        self.sprites.append(load_image("fighter_2" + sprite_suffixes[self.alignment.value] + ".png"))
+        self.sprites.append(load_image("fighter_3" + sprite_suffixes[self.alignment.value] + ".png"))
+        self.sprites.append(load_image("fighter_3" + sprite_suffixes[self.alignment.value] + ".png"))
+        self.sprites.append(load_image("fighter_3" + sprite_suffixes[self.alignment.value] + ".png"))
+        self.sprites.append(load_image("fighter_3" + sprite_suffixes[self.alignment.value] + ".png"))
+        self.sprites.append(load_image("fighter_2" + sprite_suffixes[self.alignment.value] + ".png"))
+        self.sprites.append(load_image("fighter_1" + sprite_suffixes[self.alignment.value] + ".png"))
         self.image = pygame.transform.scale(self.sprites[self.active_sprite], (64, 64))
+        self.has_moved = False
 
 
         self.position_x = x
@@ -34,9 +43,17 @@ class Unit(pygame.sprite.Sprite):
         self.rect.y = y * 64
     
     def updateAnimation(self):
+        #active frame is still updated even when unit has not moved to keep animations in sync
         self.active_sprite += 0.1
-
         if (self.active_sprite > len(self.sprites)):
             self.active_sprite = 0
-        
+        if not self.has_moved:            
+            self.image = pygame.transform.scale(self.sprites[int(self.active_sprite)], (64,64))
+    
+    def deactivate(self):
+        self.has_moved = True
+        self.image = pygame.transform.scale(load_image("fighter_inactive.png"), (64,64))
+    
+    def activate(self):
+        self.has_moved = False
         self.image = pygame.transform.scale(self.sprites[int(self.active_sprite)], (64,64))
