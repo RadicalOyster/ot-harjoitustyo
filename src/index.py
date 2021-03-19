@@ -7,9 +7,17 @@ from sprite_renderer import SpriteRenderer
 from unit import Unit
 import os
 
-dirname = os.path.dirname(__file__)
+class Clock:
+    def __init__(self):
+        self._clock = pygame.time.Clock()
 
-pygame.init()
+    def tick(self, fps):
+            self._clock.tick(fps)
+        
+    def get_ticks(self):
+        return pygame.time.get_ticks()
+
+dirname = os.path.dirname(__file__)
 
 running = True
 
@@ -25,8 +33,6 @@ from pygame.locals import (
     QUIT,
 )
 
-pygame.init()
-
 SCREEN_WIDTH = 640
 SCREEN_HEIGHT = 640
 
@@ -41,7 +47,13 @@ movementdisplay = MovementDisplay()
 units = []
 units.append(Unit(1,1))
 
+clock = Clock()
+
+pygame.init()
+
 while running:
+    clock.tick(60)
+    #print("HEEHO")
     events = pygame.event.get()
     for event in events:
         if event.type == pygame.QUIT:
@@ -80,11 +92,13 @@ while running:
                 movementdisplay.ClearMovementRange()
                 cursor.selectedUnit = None
         
-        screen.fill((24, 184, 48))
-        sprite_renderer.update(cursor, movementdisplay.GetMovementRange(), units)
-        sprite_renderer.all_sprites.draw(screen)
-        screen.blit(cursor.surf, cursor.rect)
+    screen.fill((24, 184, 48))
+    sprite_renderer.update(cursor, movementdisplay.GetMovementRange(), units)
+    sprite_renderer.all_sprites.draw(screen)
+    screen.blit(cursor.surf, cursor.rect)
+    pygame.display.flip()
 
-        pygame.display.flip()
+    for unit in units:
+        unit.updateAnimation()
 
 pygame.quit()

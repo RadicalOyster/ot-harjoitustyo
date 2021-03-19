@@ -6,8 +6,19 @@ class Unit(pygame.sprite.Sprite):
         super().__init__()
 
         self.unit_class = "fighter"
-        self.movement = 4
-        self.image = load_image("fighter.png")
+        self.movement = 3
+        self.sprites = []
+        self.sprites.append(load_image("fighter_1.png"))
+        self.sprites.append(load_image("fighter_2.png"))
+        self.sprites.append(load_image("fighter_3.png"))
+        self.sprites.append(load_image("fighter_3.png"))
+        self.sprites.append(load_image("fighter_3.png"))
+        self.sprites.append(load_image("fighter_3.png"))
+        self.sprites.append(load_image("fighter_2.png"))
+        self.sprites.append(load_image("fighter_1.png"))
+        self.active_sprite = 0
+        self.image = pygame.transform.scale(self.sprites[self.active_sprite], (64, 64))
+
 
         self.position_x = x
         self.position_y = y
@@ -21,3 +32,11 @@ class Unit(pygame.sprite.Sprite):
         self.position_y = y
         self.rect.x = x * 64
         self.rect.y = y * 64
+    
+    def updateAnimation(self):
+        self.active_sprite += 0.1
+
+        if (self.active_sprite > len(self.sprites)):
+            self.active_sprite = 0
+        
+        self.image = pygame.transform.scale(self.sprites[int(self.active_sprite)], (64,64))
