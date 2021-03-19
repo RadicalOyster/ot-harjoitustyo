@@ -6,7 +6,11 @@
 This project is a simple turn based strategy game in which units move across a grid to do battle in the style of [Fire Emblem](https://en.wikipedia.org/wiki/Fire_Emblem:_Shadow_Dragon_and_the_Blade_of_Light). More thorough documentation to come.
 
 # Features
-* Basic character movement including a pathfinding algorithm to navigate terrains (an implementation of [Dijkstra's algorithm](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm)) 
+* Basic character movement including a pathfinding algorithm to navigate terrains (an implementation of [Dijkstra's algorithm](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm))
+
+# Instructions
+Currently the game only supports selecting a unit and moving it around.
+The arrow keys are used to move around the cursor on the grid. While hovering the cursor over a unit, pressing the Z button on the keyboard will select the unit and highlight tiles that are within the unit's movement range. The X button will cancel this selection and hide the movement range display. While a unit is selected, pressing Z while the cursor is on a tile within the unit's movement range will move the unit to that tile. 
 
 # To do
 * Implement enemy units and basic combat
