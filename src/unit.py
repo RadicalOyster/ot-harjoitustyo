@@ -9,7 +9,7 @@ class Alignment(Enum):
 sprite_suffixes = ["", "_e"]
 
 class Unit(pygame.sprite.Sprite):
-    def __init__(self, x=0, y=0, alignment=Alignment.ALLY, hp=15):
+    def __init__(self, x=0, y=0, alignment=Alignment.ALLY, hp=15, name="Fighter"):
         super().__init__()
 
         self.unit_class = "fighter"
@@ -29,6 +29,7 @@ class Unit(pygame.sprite.Sprite):
         self.sprites.append(load_image("fighter_1" + sprite_suffixes[self.alignment.value] + ".png"))
         self.image = pygame.transform.scale(self.sprites[self.active_sprite], (64, 64))
         self.has_moved = False
+        self.name = name
 
         #temporary until weapons are implemented
         self.range = 1
@@ -36,16 +37,24 @@ class Unit(pygame.sprite.Sprite):
 
         self.position_x = x
         self.position_y = y
+        self.old_position_x = x
+        self.old_position_y = y
 
         self.rect = self.image.get_rect()
         self.rect.x = x * 64
         self.rect.y = y * 64
 
     def updatePosition(self, x, y):
+        self.old_position_x = self.position_x
+        self.old_position_y = self.position_y
         self.position_x = x
         self.position_y = y
         self.rect.x = x * 64
         self.rect.y = y * 64
+    
+    def revertPosition(self):
+        self.position_x = self.old_position_x
+        self.position_y = self.old_position_y
     
     def updateAnimation(self):
         #active frame is still updated even when unit has not moved to keep animations in sync

@@ -9,6 +9,8 @@ class MovementDisplay(pygame.sprite.Sprite):
         self.attack_display = pygame.sprite.Group()
         self.allowed_tiles = []
         self.attack_tiles = []
+        self.hide_movement = False
+        self.hide_attack = False
     
     def UpdateMovementTiles(self, x, y, unit):
         self.movement_display.empty()
@@ -33,9 +35,13 @@ class MovementDisplay(pygame.sprite.Sprite):
         self.attack_display.empty()
     
     def GetMovementRange(self):
+        if self.hide_movement == True:
+            return pygame.sprite.Group()
         return self.movement_display
     
     def GetAttackRange(self):
+        if self.hide_attack == True:
+            return pygame.sprite.Group()
         return self.attack_display
     
     def GetAllowedTiles(self):

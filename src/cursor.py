@@ -3,8 +3,9 @@ from enum import Enum
 
 class CursorState(Enum):
     MAP = 0
-    CHARMENU = 1
-    INACTIVE = 2
+    MOVE = 1
+    CHARMENU = 2
+    INACTIVE = 3
 
 class Cursor(pygame.sprite.Sprite):
     def __init__(self):
@@ -17,7 +18,7 @@ class Cursor(pygame.sprite.Sprite):
         self.position_y = 1
         self.rect.left = self.position_x * 64
         self.rect.top = self.position_y * 64
-        self.selectedUnit = None
+        self.selected_unit = None
         self.state = CursorState.MAP
     
     def UpdatePosition(self, x,y):
@@ -27,11 +28,14 @@ class Cursor(pygame.sprite.Sprite):
         self.rect.left = self.position_x * 64
         self.rect.top = self.position_y * 64
     
+    def UpdateMenuPosition(self, index):
+        self.selected_item = index
+    
     def UpdateUnitSelection(unit):
-        self.selectedUnit = unit
+        self.selected_unit = unit
     
     def UnselectUnit():
-        self.selectedUnit = None
+        self.selected_unit = None
     
     def UpdateState(state):
         self.state = state
