@@ -17,7 +17,8 @@ class Unit(pygame.sprite.Sprite):
         self.sprites = []
         self.active_sprite = 0
         self.alignment = alignment
-        self.hp = hp
+        self.max_hp = hp
+        self.current_hp = hp
         self.sprites.append(load_image("fighter_1" + sprite_suffixes[self.alignment.value] + ".png"))
         self.sprites.append(load_image("fighter_2" + sprite_suffixes[self.alignment.value] + ".png"))
         self.sprites.append(load_image("fighter_3" + sprite_suffixes[self.alignment.value] + ".png"))

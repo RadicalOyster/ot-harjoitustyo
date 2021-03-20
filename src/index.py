@@ -1,5 +1,5 @@
 import pygame
-from cursor import Cursor
+from cursor import Cursor, CursorState
 from movementdisplay import MoveTile, MovementDisplay
 from utility_functions import UnitOnTile
 from movementdisplay import MovementDisplay
@@ -16,6 +16,8 @@ class Clock:
         
     def get_ticks(self):
         return pygame.time.get_ticks()
+
+pygame.init()
 
 dirname = os.path.dirname(__file__)
 
@@ -51,7 +53,10 @@ units.append(Unit(5,3,Alignment.ENEMY))
 
 clock = Clock()
 test = pygame.Surface((640,640))
-pygame.init()
+
+testFont = pygame.font.SysFont("Arial", 20)
+#testText = testFont.render("TEST",0,(255,255,255))
+pygame.font.init()
 
 while running:
     clock.tick(60)
@@ -98,23 +103,30 @@ while running:
                         movementdisplay.UpdateMovementTiles(cursor.position_x, cursor.position_y, unit)
                         movementdisplay.UpdateAttackTiles(cursor.position_x, cursor.position_y, unit)
                         cursor.selectedUnit = unit
+                        cursor.state = CursorState.CHARMENU
 
         #If X is pressed, clear selected unit
             elif event.key == pygame.K_x:
                 movementdisplay.ClearMovementRange()
                 cursor.selectedUnit = None
+                cursor.state = CursorState.MAP
         
         #For debugging only!
         #If C is pressed, reactivate all units
             elif event.key == pygame.K_c:
                 for unit in units:
                     unit.activate()
-        
+    
     screen.fill((24, 184, 48))
     sprite_renderer.update(cursor, units, movementdisplay.GetMovementRange(), movementdisplay.GetAttackRange())
     sprite_renderer.overlays.draw(screen)
     sprite_renderer.sprites.draw(screen)
     screen.blit(cursor.surf, cursor.rect)
+
+    if cursor.state == CursorState.CHARMENU and cursor.selectedUnit is not None:
+        test = testFont.render("HP: " + str(cursor.selectedUnit.max_hp) + "/" + str(cursor.selectedUnit.current_hp) ,False,(255,255,255))
+        screen.blit(test,(0,0))
+
     pygame.display.flip()
 
     for unit in units:
