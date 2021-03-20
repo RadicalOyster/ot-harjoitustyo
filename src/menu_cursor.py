@@ -2,7 +2,9 @@ import pygame
 from enum import Enum
 
 class CharMenuCommands(Enum):
-    WAIT = 0
+    ATTACK = 0
+    ITEM = 1
+    WAIT = 2
 
 class MenuCursor(pygame.sprite.Sprite):
     def __init__(self):
@@ -15,19 +17,21 @@ class MenuCursor(pygame.sprite.Sprite):
         self.rect.top = 5
         self.index = 0
     
-    def UpdatePosition(self, x,y):
-        self.position_x = x
-        self.position_y = y
-
-        self.rect.left = self.position_x * 64
-        self.rect.top = self.position_y * 64
     
-    def UpdatePosition(self, menu, pos):
+    def ScrollMenu(self, menu, pos):
         self.index = pos
         if pos >= len(menu):
-            pos = 0
+            self.index = 0
         elif pos < 0:
-            pos = len(menu)
+            self.index = len(menu) - 1
+        
+        self.rect.left = 8
+        self.rect.top = 5 + self.index * 20
+    
+    def ResetCursor(self):
+        self.index = 0
+        self.rect.left = 8
+        self.rect.top = 5
     
     def UpdateUnitSelection(unit):
         self.selected_unit = unit
@@ -40,5 +44,7 @@ class MenuCursor(pygame.sprite.Sprite):
     
     def GetCommands(self):
         commands = []
+        commands.append(CharMenuCommands.ATTACK.name.capitalize())
+        commands.append(CharMenuCommands.ITEM.name.capitalize())
         commands.append(CharMenuCommands.WAIT.name.capitalize())
         return commands

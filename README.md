@@ -18,7 +18,7 @@ For debugging purposes, the C button will make inactive units active.
 * Implement enemy units and basic combat
 * Simple ai
 * (Possibly) a scrolling camera to allow for bigger maps
-* Clean up project structure and code
+* Clean up project structure and code, especially the main loop
 
 # Tehtävät
 
