@@ -7,7 +7,9 @@ from unit import Unit, Alignment
 import os
 from game_loop import GameLoop
 from event_queue import EventQueue
+from game_clock import GameClock
 
+#Experimental junk
 def ReturnAttackOrder(attacker, defender):
     attack_order = []
     
@@ -33,26 +35,30 @@ def ReturnAttackOrder(attacker, defender):
             #print(current_defender.name, " has died, ending combat")
             #break
 
-dirname = os.path.dirname(__file__)
 
-SCREEN_WIDTH = 640
-SCREEN_HEIGHT = 640
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("Faux Emblem")
+#Initializing the game
 
-units = []
-units.append(Unit(1,1,name="Ferdinand", strength=8, speed=6, defense=5))
-units.append(Unit(5,3,Alignment.ENEMY))
+def main():
+    SCREEN_WIDTH = 640
+    SCREEN_HEIGHT = 640
+    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    pygame.display.set_caption("Faux Emblem")
 
-combat_order = ReturnAttackOrder(units[0], units[1])
-#print(combat_order)
+    units = []
+    units.append(Unit(1,1,name="Ferdinand", strength=8, speed=6, defense=5))
+    units.append(Unit(5,3,Alignment.ENEMY))
 
-pygame.font.init()
-font = pygame.font.SysFont("Arial", 20)
+    pygame.font.init()
+    font = pygame.font.SysFont("Arial", 20)
 
-game_loop = GameLoop(screen, SpriteRenderer(), Cursor(), MenuCursor(), EventQueue(), units, MovementDisplay(), font)
+    clock = GameClock()
 
-pygame.init()
-game_loop.start()
+    game_loop = GameLoop(screen, SpriteRenderer(), Cursor(), MenuCursor(), EventQueue(), units, MovementDisplay(), font, clock)
 
-pygame.quit()
+    pygame.init()
+    game_loop.start()
+
+    pygame.quit()
+
+if __name__ == "__main__":
+    main()

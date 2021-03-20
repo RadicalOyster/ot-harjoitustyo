@@ -19,7 +19,7 @@ from pygame.locals import (
 )
 
 class GameLoop():
-    def __init__(self, screen, sprite_renderer, cursor, menu_cursor, event_queue, units, movement_display, font):
+    def __init__(self, screen, sprite_renderer, cursor, menu_cursor, event_queue, units, movement_display, font, clock):
         self.screen = screen
         self.sprite_renderer = sprite_renderer
         self.cursor = cursor
@@ -28,25 +28,28 @@ class GameLoop():
         self.units = units
         self.movement_display = movement_display
         self.font = font
+        self.clock = clock
+        self.running = True
 
     def start(self):
-        running = True
-        clock = GameClock()
-        while running:
-            clock.tick(60)
-
+        while self.running:
+            self.clock.tick(60)
             #Check if the currently selected tile has a unit on it
             unit = UnitOnTile(self.cursor.position_x, self.cursor.position_y, self.units)
+            self._handle_events(unit)
+            self._render(unit)
+            self._update_animations()
 
+    def _handle_events(self, unit):
             events = self.event_queue.get()
 
             for event in events:
                 #Close game if window is closed or escape is pressed
                 if event.type == pygame.QUIT:
-                        running = False
+                        self.running = False
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
-                        running = False
+                        self.running = False
                 
                 #Cursor movement, movement is disabled while in menu
                 #To do: replace hard-coded coordinates with coordinates depending on map size
@@ -127,7 +130,8 @@ class GameLoop():
                     elif event.key == pygame.K_c:
                         for unit_to_activate in self.units:
                             unit_to_activate.activate()
-            
+    
+    def _render(self, unit):
             self.screen.fill((24, 184, 48))
             self.sprite_renderer.update(self.cursor, self.units, self.movement_display.GetMovementRange(), self.movement_display.GetAttackRange())
             self.sprite_renderer.overlays.draw(self.screen)
@@ -182,10 +186,10 @@ class GameLoop():
             self.screen.blit(cursor_state, (440, 4))
 
             pygame.display.flip()
-
-            #Update animations frames
-            for unit_to_animate in self.units:
-                unit_to_animate.updateAnimation()
+    
+    def _update_animations(self):
+            for unit in self.units:
+                unit.updateAnimation()
             for movetile in self.movement_display.GetMovementRange():
                 movetile.updateAnimation()
             for attacktile in self.movement_display.GetAttackRange():
