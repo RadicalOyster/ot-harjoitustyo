@@ -30,6 +30,7 @@ class GameLoop():
         self.font = font
         self.clock = clock
         self.running = True
+        self.disable_input = False
 
     def start(self):
         while self.running:
@@ -44,8 +45,10 @@ class GameLoop():
             events = self.event_queue.get()
 
             for event in events:
+                if self.disable_input:
+                    pass
                 #Close game if window is closed or escape is pressed
-                if event.type == pygame.QUIT:
+                elif event.type == pygame.QUIT:
                         self.running = False
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:

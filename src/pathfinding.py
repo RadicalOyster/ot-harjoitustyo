@@ -1,7 +1,7 @@
 import sys
 from heapdict import heapdict
 
-def GetMovementRange(cursorX, cursorY, movement):
+def GetMovementRange(cursorX, cursorY, movement=0):
     map = [
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],

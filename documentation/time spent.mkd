@@ -1,0 +1,13 @@
+# Time spent
+
+| day | time | what I did  |
+| :----:|:-----| :-----|
+| 15.3. | 2    | deciding on project, doing week 1 exercises |
+| 16.3. | 4    | research for project structure and pathfinding algorithms, 
+| 17.3. | 5    | coded a basic interface with controls and pathfinding, began work on more features |
+| 19.3. | 4    | bug fixes, cleaning up the code, added enemy units and other features|
+| 19.3. | 2    | worked on graphics and cleaned up some code
+| 20.3. | 3    | cleaning up code, changing old code to prepare for new features |
+| 20.3  | 2    | started working on a menu system |
+| 20.3. | 4    | major refactoring |
+| total | 26   | | 

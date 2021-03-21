@@ -63,6 +63,16 @@ class Unit(pygame.sprite.Sprite):
         self.rect.x = self.old_position_x * 64
         self.rect.y = self.old_position_y * 64
     
+    def fineTunePosition(self, dx, dy):
+        self.position_x += dx
+        self.position_y += yx
+        self.rect.x += dx
+        self.rect.y += dy
+    
+    def rememberPosition(self, x, y):
+        self.old_position_x = x
+        self.old_position_y = y
+    
     def updateAnimation(self):
         #active frame is still updated even when unit has not moved to keep animations in sync
         self.active_sprite += 0.1
