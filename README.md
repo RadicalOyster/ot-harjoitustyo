@@ -20,6 +20,10 @@ For debugging purposes, the C button will make inactive units active.
 * (Possibly) a scrolling camera to allow for bigger maps
 * Clean up project structure and code, especially the main loop
 
+# Links
+
+[Timekeeping](https://github.com/RadicalOyster/ot-harjoitustyo/blob/master/documentation/time%20spent.mkd)
+
 # Tehtävät
 
 ## Viikko 1
