@@ -2,38 +2,28 @@ import sys
 from heapdict import heapdict
 
 #Clean up everything here
-def GetRanges(cursorX, cursorY, movement=0):
-    map = [
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-    ]
+class PathFinding():
+    def __init__(self, cursorX, cursorY, level):
+        self.level = level
+        self.rows = len(self.level)
+        self.columns = len(self.level[0])
 
-    rows = len(map)
-    columns = len(map[0])
+        self.queue = heapdict()
 
-    queue = heapdict()
+        self.distance = [[sys.maxsize for x in range(self.columns)] for y in range(self.rows)]
+        self.visited = [[False for x in range(self.columns)] for y in range(self.rows)]
+        #needed later for reconstructing path
+        self.previous = {(x,y):0 for x in range(self.columns) for y in range(self.rows)}
 
-    distance = [[sys.maxsize for x in range(columns)] for y in range(rows)]
-    visited = [[False for x in range(columns)] for y in range(rows)]
-    #needed later for reconstructing path
-    previous = {(x,y):0 for x in range(columns) for y in range(rows)}
+        self.distance[cursorY][cursorX] = 0
+        self.visited[cursorY][cursorX] = True
+        self.queue[cursorY, cursorX] = 0
 
-    distance[cursorY][cursorX] = 0
-    visited[cursorY][cursorX] = True
-    queue[cursorY, cursorX] = 0
-
-    def isValid(x, y):
-        return x >= 0 and x < len(map[0]) and y >= 0 and y < len(map)
-
-    def traverse(row, column):
+    def _isValid(self, x, y):
+        return x >= 0 and x < len(self.level[0]) and y >= 0 and y < len(self.level)
+    
+    #The core algorithm
+    def traverse(self, row, column):
         for i in range (0, 4):
             new_row = row
             new_column = column
@@ -45,41 +35,51 @@ def GetRanges(cursorX, cursorY, movement=0):
                 new_column -= 1
             elif i == 3:
                 new_column += 1
-            if not isValid(new_column,new_row):
+            if not self._isValid(new_column,new_row):
                 continue
-            if visited[new_row][new_column]:
+            if self.visited[new_row][new_column]:
                 continue
 
             node = (row,column)
-            previous[new_row,new_column] = node
+            self.previous[new_row,new_column] = node
 
-            node_distance = int(distance[row][column]) + int(map[new_row][new_column])
-            queue[new_row, new_column] = node_distance
-            distance[new_row][new_column] = node_distance
-            visited[new_row][new_column] = True
-
-    def PrintRange(distance, movement):
-        for line in distance:
+            node_distance = int(self.distance[row][column]) + int(self.level[new_row][new_column])
+            self.queue[new_row, new_column] = node_distance
+            self.distance[new_row][new_column] = node_distance
+            self.visited[new_row][new_column] = True
+    
+    def PrintRange(self, reach):
+        for line in self.distance:
             for value in line:
-                if (value > movement):
+                if (value > reach):
                     print("X",end=" ")
                 else:
                     print("*",end=" ")
             print("")
-
-    def ReturnRanges(movement):
-        movableSpaces = []
-        for i in range(0, len(map)):
-            for j in range(0, len(map[0])):
-                if (distance[i][j] > movement):
+    
+    #Returns a list of reachable nodes
+    def ReturnRanges(self, reach):
+        reachableSpaces = []
+        for i in range(0, len(self.level)):
+            for j in range(0, len(self.level[0])):
+                if (self.distance[i][j] > reach):
                     pass
                 else:
-                    movableSpaces.append((i,j))
-        return movableSpaces
+                    reachableSpaces.append((j,i))
+        return reachableSpaces
     
-    while len(queue) > 0:
-        head = queue.popitem()
-        row, column = head[0]
-        traverse(row, column)
+    #Returns shortest path to point
+    #Incomplete
+    def ReturnPath(start, destination):
+        path = []
+        current_node = destination
+        path.append(destination)
+        return path
     
-    return ReturnRanges(movement)
+    #Run the algorithm to determine the distance between each point on the level and the cursor position
+    def CalculateDistances(self, x, y):
+        self.__init__(x, y, self.level)
+        while len(self.queue) > 0:
+            head = self.queue.popitem()
+            row, column = head[0]
+            self.traverse(row, column)

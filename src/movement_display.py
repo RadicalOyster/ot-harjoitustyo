@@ -1,11 +1,10 @@
 import pygame
-import pathfinding
 from attack_tile import AttackTile
 from move_tile import MoveTile
 from utility_functions import load_image
 
 class MovementDisplay(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, pathfinding):
         super(MovementDisplay, self).__init__()
         self.movement_display = pygame.sprite.Group()
         self.attack_display = pygame.sprite.Group()
@@ -13,17 +12,20 @@ class MovementDisplay(pygame.sprite.Sprite):
         self.attack_tiles = []
         self.hide_movement = False
         self.hide_attack = False
+        self.pathfinding = pathfinding
     
     def UpdateMovementTiles(self, x, y, unit):
         self.movement_display.empty()
-        allowed_tiles = pathfinding.GetRanges(y, x, unit.movement)
+        self.pathfinding.CalculateDistances(x, y)
+        allowed_tiles = self.pathfinding.ReturnRanges(unit.movement)
         self.allowed_tiles = allowed_tiles
         for tile in allowed_tiles:
             self.movement_display.add(MoveTile(tile[0], tile[1]))
 
     def UpdateAttackTiles(self, x, y, unit):
         self.attack_display.empty()
-        reachable_tiles = pathfinding.GetRanges(y, x, unit.movement+unit.range)
+        self.pathfinding.CalculateDistances(x, y)
+        reachable_tiles = self.pathfinding.ReturnRanges(unit.movement + unit.range)
         attack_tiles = []
         for tile in reachable_tiles:
             if tile not in self.allowed_tiles:

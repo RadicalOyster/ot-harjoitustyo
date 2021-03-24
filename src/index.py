@@ -8,6 +8,7 @@ import os
 from game_loop import GameLoop
 from event_queue import EventQueue
 from game_clock import GameClock
+from pathfinding import PathFinding
 
 #Experimental junk
 def ReturnAttackOrder(attacker, defender):
@@ -53,7 +54,22 @@ def main():
 
     clock = GameClock()
 
-    game_loop = GameLoop(screen, SpriteRenderer(), Cursor(), MenuCursor(), EventQueue(), units, MovementDisplay(), font, clock)
+    level = [
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    ]
+
+    pathfinding = PathFinding(1, 1, level)
+
+    game_loop = GameLoop(screen, SpriteRenderer(), Cursor(), MenuCursor(), EventQueue(), units, MovementDisplay(pathfinding), font, clock)
 
     pygame.init()
     game_loop.start()
