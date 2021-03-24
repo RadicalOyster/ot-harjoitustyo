@@ -1,6 +1,7 @@
 import sys
 from heapdict import heapdict
 
+#Clean up everything here
 def GetMovementRange(cursorX, cursorY, movement=0):
     map = [
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -22,6 +23,7 @@ def GetMovementRange(cursorX, cursorY, movement=0):
 
     distance = [[sys.maxsize for x  in range(columns)] for y in range(rows)]
     visited = [[False for x  in range(columns)] for y in range(rows)]
+    #needed later for reconstructing path
     previous = {(x,y):0 for x in range(columns) for y in range(rows)}
 
     distance[cursorY][cursorX] = 0

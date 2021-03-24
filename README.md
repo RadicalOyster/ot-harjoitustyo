@@ -7,7 +7,8 @@ This project is a simple turn based strategy game in which units move across a g
 
 # Features
 * Basic character movement including a pathfinding algorithm to navigate terrain (an implementation of [Dijkstra's algorithm](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm))
-* Attack and movement range display
+* Attack and movement range display, tiles highlighted in green show tiles unit can move to, red tiles show tiles unit can reach with its attack command
+* Rudimentary menu system for selecting unit actions (only wait command has been implemented)
 
 # Instructions
 Currently the game only supports selecting a unit and moving it around.
