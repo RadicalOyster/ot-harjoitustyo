@@ -16,14 +16,14 @@ class MovementDisplay(pygame.sprite.Sprite):
     
     def UpdateMovementTiles(self, x, y, unit):
         self.movement_display.empty()
-        allowed_tiles = pathfinding.GetMovementRange(y, x, unit.movement)
+        allowed_tiles = pathfinding.GetRanges(y, x, unit.movement)
         self.allowed_tiles = allowed_tiles
         for tile in allowed_tiles:
             self.movement_display.add(MoveTile(tile[0], tile[1]))
 
     def UpdateAttackTiles(self, x, y, unit):
         self.attack_display.empty()
-        reachable_tiles = pathfinding.GetMovementRange(y, x, unit.movement+unit.range)
+        reachable_tiles = pathfinding.GetRanges(y, x, unit.movement+unit.range)
         attack_tiles = []
         for tile in reachable_tiles:
             if tile not in self.allowed_tiles:

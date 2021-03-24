@@ -2,7 +2,7 @@ import sys
 from heapdict import heapdict
 
 #Clean up everything here
-def GetMovementRange(cursorX, cursorY, movement=0):
+def GetRanges(cursorX, cursorY, movement=0):
     map = [
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -21,8 +21,8 @@ def GetMovementRange(cursorX, cursorY, movement=0):
 
     queue = heapdict()
 
-    distance = [[sys.maxsize for x  in range(columns)] for y in range(rows)]
-    visited = [[False for x  in range(columns)] for y in range(rows)]
+    distance = [[sys.maxsize for x in range(columns)] for y in range(rows)]
+    visited = [[False for x in range(columns)] for y in range(rows)]
     #needed later for reconstructing path
     previous = {(x,y):0 for x in range(columns) for y in range(rows)}
 
@@ -34,7 +34,7 @@ def GetMovementRange(cursorX, cursorY, movement=0):
         return x >= 0 and x < len(map[0]) and y >= 0 and y < len(map)
 
     def traverse(row, column):
-        for i in range (0,4):
+        for i in range (0, 4):
             new_row = row
             new_column = column
             if i == 0:
@@ -54,16 +54,11 @@ def GetMovementRange(cursorX, cursorY, movement=0):
             previous[new_row,new_column] = node
 
             node_distance = int(distance[row][column]) + int(map[new_row][new_column])
-            queue[new_row,new_column] = node_distance
+            queue[new_row, new_column] = node_distance
             distance[new_row][new_column] = node_distance
             visited[new_row][new_column] = True
 
-    while len(queue) > 0:
-        head = queue.popitem()
-        row, column = head[0]
-        traverse(row,column)
-
-    def PrintMovementRange(distance, movement):
+    def PrintRange(distance, movement):
         for line in distance:
             for value in line:
                 if (value > movement):
@@ -72,16 +67,19 @@ def GetMovementRange(cursorX, cursorY, movement=0):
                     print("*",end=" ")
             print("")
 
-    #PrintMovementRange(distance, 5)
-
-    def ReturnMovementRange(movement):
+    def ReturnRanges(movement):
         movableSpaces = []
-        for i in range(0,len(map)):
-            for j in range(0,len(map[0])):
+        for i in range(0, len(map)):
+            for j in range(0, len(map[0])):
                 if (distance[i][j] > movement):
                     pass
                 else:
                     movableSpaces.append((i,j))
         return movableSpaces
     
-    return ReturnMovementRange(movement)
+    while len(queue) > 0:
+        head = queue.popitem()
+        row, column = head[0]
+        traverse(row, column)
+    
+    return ReturnRanges(movement)
