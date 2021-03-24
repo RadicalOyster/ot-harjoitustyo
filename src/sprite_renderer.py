@@ -7,8 +7,9 @@ class SpriteRenderer(pygame.sprite.Sprite):
         self.sprites = pygame.sprite.Group()
         self.indicators = pygame.sprite.Group()
         self.overlays = pygame.sprite.Group()
+        self.show_indicators = False
 
-    def update(self, cursor, units, indicators, movementranges, attackranges):   
+    def update(self, cursor, units, indicators, movementranges, attackranges):
         self.sprites.empty()
         self.overlays.empty()
         self.indicators.empty()
@@ -16,4 +17,11 @@ class SpriteRenderer(pygame.sprite.Sprite):
         self.overlays.add(movementranges)
         self.overlays.add(attackranges)
         self.sprites.add(units)
-        self.indicators.add(indicators)
+        if self.show_indicators:
+            self.indicators.add(indicators)
+    
+    def hideIndicators(self):
+        self.show_indicators = False
+    
+    def showIndicators(self):
+        self.show_indicators = True

@@ -49,116 +49,31 @@ class GameLoop():
             for event in events:
                 if self.disable_input:
                     pass
+
                 #Close game if window is closed or escape is pressed
                 elif event.type == pygame.QUIT:
                         self.running = False
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         self.running = False
-                
-                #Cursor movement, movement is disabled while in menu
-                #To do: replace hard-coded coordinates with coordinates depending on map size, refactor to avoid repetition
+
+                #Handle arrow keys
                     elif event.key == pygame.K_UP:
-                        if self.cursor.position_y > 0 and self.cursor.state is not CursorState.CHARMENU:
-                            self.cursor.UpdatePosition(self.cursor.position_x, self.cursor.position_y - 1)
-                            if self.cursor.selected_unit is not None:
-                                self.indicators.empty()
-                                indicator_coordinates = self.movement_display.pathfinding.ReturnPath((self.cursor.selected_unit.position_x, self.cursor.selected_unit.position_y), (self.cursor.position_x, self.cursor.position_y))
-
-                                for indicator in indicator_coordinates:
-                                    self.indicators.add(PathIndicator(indicator[0], indicator[1]))
-                        elif self.cursor.state == CursorState.CHARMENU:
-                            self.menu_cursor.ScrollMenu(self.menu_cursor.GetCommands(), self.menu_cursor.index - 1)
-
+                        self._move_selection(0, -1, (10,10))
                     elif event.key == pygame.K_DOWN:
-                        if self.cursor.position_y < 9 and self.cursor.state is not CursorState.CHARMENU:
-                            self.cursor.UpdatePosition(self.cursor.position_x, self.cursor.position_y + 1)
-                            if self.cursor.selected_unit is not None:
-                                self.indicators.empty()
-                                indicator_coordinates = self.movement_display.pathfinding.ReturnPath((self.cursor.selected_unit.position_x, self.cursor.selected_unit.position_y), (self.cursor.position_x, self.cursor.position_y))
-
-                                for indicator in indicator_coordinates:
-                                    self.indicators.add(PathIndicator(indicator[0], indicator[1]))
-                        elif self.cursor.state == CursorState.CHARMENU:
-                            self.menu_cursor.ScrollMenu(self.menu_cursor.GetCommands(), self.menu_cursor.index + 1)
-
+                        self._move_selection(0, 1, (10,10))
                     elif event.key == pygame.K_LEFT:
-                        if self.cursor.position_x > 0 and self.cursor.state is not CursorState.CHARMENU:
-                            self.cursor.UpdatePosition(self.cursor.position_x - 1, self.cursor.position_y)
-                            if self.cursor.selected_unit is not None:
-                                self.indicators.empty()
-                                indicator_coordinates = self.movement_display.pathfinding.ReturnPath((self.cursor.selected_unit.position_x, self.cursor.selected_unit.position_y), (self.cursor.position_x, self.cursor.position_y))
-
-                                for indicator in indicator_coordinates:
-                                    self.indicators.add(PathIndicator(indicator[0], indicator[1]))
-                            
-
+                        self._move_selection(-1, 0, (10,10))    
                     elif event.key == pygame.K_RIGHT:
-                        if self.cursor.position_x < 9 and self.cursor.state is not CursorState.CHARMENU:
-                            self.cursor.UpdatePosition(self.cursor.position_x + 1, self.cursor.position_y)
-                            if self.cursor.selected_unit is not None:
-                                self.indicators.empty()
-                                indicator_coordinates = self.movement_display.pathfinding.ReturnPath((self.cursor.selected_unit.position_x, self.cursor.selected_unit.position_y), (self.cursor.position_x, self.cursor.position_y))
+                        self._move_selection(1, 0, (10,10))
 
-                                for indicator in indicator_coordinates:
-                                    self.indicators.add(PathIndicator(indicator[0], indicator[1]))
-                            
-
-                    
-                #When Z is pressed, check if there is a unit on tile
+                #Handle Z key press
                     elif event.key == pygame.K_z:
-
-                #If player has selected a unit and presses Z on an empty tile in range, move unit
-                #If the selected unit is the same as the unit on that tile, change cursor state to CHARMENU
-                        if self.cursor.selected_unit is not None:
-                            if unit is None:
-                                if (self.cursor.position_x, self.cursor.position_y) in self.movement_display.GetAllowedTiles():
-                                    self.cursor.selected_unit.updatePosition(self.cursor.position_x, self.cursor.position_y)
-                                    self.movement_display.hide_movement = True
-                                    self.movement_display.hide_attack = True
-                                    self.cursor.state = CursorState.CHARMENU
-                #If already in CHARMENU, button confirms menu selection
-                            elif unit == self.cursor.selected_unit:
-                                if self.cursor.state == CursorState.CHARMENU:
-                                    if (self.menu_cursor.index == CharMenuCommands.WAIT.value):
-                                        self.movement_display.ClearMovementRange()
-                                        self.cursor.selected_unit.deactivate()
-                                        self.cursor.selected_unit = None
-                                        self.cursor.state = CursorState.MAP
-                                        self.menu_cursor.ResetCursor()
-                                    else:
-                                        pass
-                                else:
-                                    self.cursor.state = CursorState.CHARMENU
-                                    self.movement_display.hide_movement = True
-                                    self.movement_display.hide_attack = True
-                                
-
-                #If player has not selected a unit and there is a unit on the tile, select that unit if it is an active ally and display its movement range
-                        else:
-                            if unit is not None and unit.alignment is Alignment.ALLY and unit.has_moved == False:
-                                self.movement_display.hide_movement = False
-                                self.movement_display.hide_attack = False
-                                self.movement_display.UpdateMovementTiles(self.cursor.position_x, self.cursor.position_y, unit)
-                                self.movement_display.UpdateAttackTiles(self.cursor.position_x, self.cursor.position_y, unit)
-                                self.cursor.selected_unit = unit
-                                self.cursor.selected_unit.old_position_x = self.cursor.selected_unit.position_x
-                                self.cursor.selected_unit.old_position_y = self.cursor.selected_unit.position_y
-                                self.cursor.state = CursorState.MOVE
+                        self._handle_confirm(unit)
 
                 #If X is pressed, clear selected unit
                     elif event.key == pygame.K_x:
-                        self.menu_cursor.ResetCursor()
-                        if self.cursor.state == CursorState.MOVE:
-                            self.movement_display.ClearMovementRange()
-                            self.cursor.selected_unit = None
-                            self.cursor.state = CursorState.MAP
-                        elif self.cursor.state == CursorState.CHARMENU:
-                            self.cursor.state = CursorState.MOVE
-                            self.cursor.selected_unit.revertPosition()
-                            self.cursor.UpdatePosition(self.cursor.selected_unit.position_x, self.cursor.selected_unit.position_y)
-                            self.movement_display.hide_movement = False
-                            self.movement_display.hide_attack = False
+                        self._handle_cancel()
                 
                 #For debugging only!
                 #If C is pressed, reactivate all units
@@ -166,12 +81,87 @@ class GameLoop():
                         for unit_to_activate in self.units:
                             unit_to_activate.activate()
 
+    def _select_unit(self, unit):
+        self.movement_display.hide_movement = False
+        self.movement_display.hide_attack = False
+        self.movement_display.UpdateMovementTiles(self.cursor.position_x, self.cursor.position_y, unit)
+        self.movement_display.UpdateAttackTiles(self.cursor.position_x, self.cursor.position_y, unit)
+        self.cursor.selected_unit = unit
+        self.cursor.selected_unit.old_position_x = self.cursor.selected_unit.position_x
+        self.cursor.selected_unit.old_position_y = self.cursor.selected_unit.position_y
+        self.cursor.state = CursorState.MOVE
+        self.sprite_renderer.showIndicators()
     
+    def _get_path(self):
+        self.indicators.empty()
+        indicator_coordinates = self.movement_display.pathfinding.ReturnPath((self.cursor.selected_unit.position_x, self.cursor.selected_unit.position_y), (self.cursor.position_x, self.cursor.position_y))
+        for indicator in indicator_coordinates[:-1]:
+            if indicator in self.movement_display.allowed_tiles:
+                self.indicators.add(PathIndicator(indicator[0], indicator[1]))
+    
+    #Moves the cursor
+    def _move_selection(self, dx, dy, map_dimensions):
+        if self.cursor.state != CursorState.CHARMENU:
+            self.cursor.UpdatePosition(self.cursor.position_x + dx, self.cursor.position_y + dy)
+            if self.cursor.selected_unit is not None and (self.cursor.position_x,self.cursor.position_y) in self.movement_display.allowed_tiles:
+                self._get_path()
+        elif self.cursor.state == CursorState.CHARMENU:
+            self.menu_cursor.ScrollMenu(self.menu_cursor.GetCommands(), self.menu_cursor.index + dy)
+
+    def _handle_confirm(self, unit):
+        #If player has selected a unit and presses Z on an empty tile in range, move unit
+        #If the selected unit is the same as the unit on that tile, change cursor state to CHARMENU
+        if self.cursor.selected_unit is not None:
+            if unit is None:
+                if (self.cursor.position_x, self.cursor.position_y) in self.movement_display.GetAllowedTiles():
+                    self.cursor.selected_unit.updatePosition(self.cursor.position_x, self.cursor.position_y)
+                    self.movement_display.hide_movement = True
+                    self.movement_display.hide_attack = True
+                    self.indicators.empty()
+                    self.cursor.state = CursorState.CHARMENU
+                #If already in CHARMENU, button confirms menu selection
+            elif unit == self.cursor.selected_unit:
+                if self.cursor.state == CursorState.CHARMENU:
+                    if (self.menu_cursor.index == CharMenuCommands.WAIT.value):
+                        self.movement_display.ClearMovementRange()
+                        self.cursor.selected_unit.deactivate()
+                        self.cursor.selected_unit = None
+                        self.cursor.state = CursorState.MAP
+                        self.menu_cursor.ResetCursor()
+                    else:
+                        pass
+                else:
+                    self.cursor.state = CursorState.CHARMENU
+                    self.movement_display.hide_movement = True
+                    self.movement_display.hide_attack = True
+            #If player has not selected a unit and there is a unit on the tile, select that unit if it is an active ally and display its movement range
+        else:
+            if unit is not None and unit.alignment is Alignment.ALLY and unit.has_moved == False:
+                self._select_unit(unit)
+    
+    def _handle_cancel(self):
+        self.menu_cursor.ResetCursor()
+        self.indicators.empty()
+        if self.cursor.state == CursorState.MOVE:
+            self.movement_display.ClearMovementRange()
+            self.cursor.selected_unit = None
+            self.cursor.state = CursorState.MAP
+            self.sprite_renderer.hideIndicators()
+        elif self.cursor.state == CursorState.CHARMENU:
+            self.cursor.state = CursorState.MOVE
+            self.cursor.selected_unit.revertPosition()
+            self.cursor.UpdatePosition(self.cursor.selected_unit.position_x, self.cursor.selected_unit.position_y)
+            self.movement_display.hide_movement = False
+            self.movement_display.hide_attack = False
+    
+
+
     def _render(self, unit):
             self.screen.fill((24, 184, 48))
             self.sprite_renderer.update(self.cursor, self.units, self.indicators, self.movement_display.GetMovementRange(), self.movement_display.GetAttackRange())
             self.sprite_renderer.overlays.draw(self.screen)
-            self.sprite_renderer.indicators.draw(self.screen)
+            if self.sprite_renderer.show_indicators:
+                self.sprite_renderer.indicators.draw(self.screen)
             self.sprite_renderer.sprites.draw(self.screen)
             self.screen.blit(self.cursor.surf, self.cursor.rect)
 
