@@ -13,7 +13,7 @@ class PathFinding():
         self.distance = [[sys.maxsize for x in range(self.columns)] for y in range(self.rows)]
         self.visited = [[False for x in range(self.columns)] for y in range(self.rows)]
         #needed later for reconstructing path
-        self.previous = {(x,y):0 for x in range(self.columns) for y in range(self.rows)}
+        self.previous = {(x,y):(0,0) for x in range(self.columns) for y in range(self.rows)}
 
         self.distance[cursorY][cursorX] = 0
         self.visited[cursorY][cursorX] = True
@@ -70,15 +70,21 @@ class PathFinding():
     
     #Returns shortest path to point
     #Incomplete
-    def ReturnPath(start, destination):
+    def ReturnPath(self, start, destination):
         path = []
         current_node = destination
         path.append(destination)
+        
+        while current_node != start:
+            current_node = self.previous[current_node]
+            path.append(current_node)
+        
         return path
     
     #Run the algorithm to determine the distance between each point on the level and the cursor position
     def CalculateDistances(self, x, y):
         self.__init__(x, y, self.level)
+
         while len(self.queue) > 0:
             head = self.queue.popitem()
             row, column = head[0]

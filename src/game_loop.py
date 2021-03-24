@@ -4,6 +4,7 @@ from utility_functions import UnitOnTile
 from cursor import CursorState
 from menu_cursor import CharMenuCommands
 from unit import Alignment
+from path_indicator import PathIndicator
 
 from pygame.locals import (
     K_UP,
@@ -26,6 +27,7 @@ class GameLoop():
         self.menu_cursor = menu_cursor
         self.event_queue = event_queue
         self.units = units
+        self.indicators = pygame.sprite.Group()
         self.movement_display = movement_display
         self.font = font
         self.clock = clock
@@ -55,24 +57,54 @@ class GameLoop():
                         self.running = False
                 
                 #Cursor movement, movement is disabled while in menu
-                #To do: replace hard-coded coordinates with coordinates depending on map size
+                #To do: replace hard-coded coordinates with coordinates depending on map size, refactor to avoid repetition
                     elif event.key == pygame.K_UP:
                         if self.cursor.position_y > 0 and self.cursor.state is not CursorState.CHARMENU:
                             self.cursor.UpdatePosition(self.cursor.position_x, self.cursor.position_y - 1)
+                            if self.cursor.selected_unit is not None:
+                                self.indicators.empty()
+                                indicator_coordinates = self.movement_display.pathfinding.ReturnPath((self.cursor.selected_unit.position_x, self.cursor.selected_unit.position_y), (self.cursor.position_x, self.cursor.position_y))
+
+                                for indicator in indicator_coordinates:
+                                    self.indicators.add(PathIndicator(indicator[0], indicator[1]))
                         elif self.cursor.state == CursorState.CHARMENU:
                             self.menu_cursor.ScrollMenu(self.menu_cursor.GetCommands(), self.menu_cursor.index - 1)
+
                     elif event.key == pygame.K_DOWN:
                         if self.cursor.position_y < 9 and self.cursor.state is not CursorState.CHARMENU:
                             self.cursor.UpdatePosition(self.cursor.position_x, self.cursor.position_y + 1)
+                            if self.cursor.selected_unit is not None:
+                                self.indicators.empty()
+                                indicator_coordinates = self.movement_display.pathfinding.ReturnPath((self.cursor.selected_unit.position_x, self.cursor.selected_unit.position_y), (self.cursor.position_x, self.cursor.position_y))
+
+                                for indicator in indicator_coordinates:
+                                    self.indicators.add(PathIndicator(indicator[0], indicator[1]))
                         elif self.cursor.state == CursorState.CHARMENU:
                             self.menu_cursor.ScrollMenu(self.menu_cursor.GetCommands(), self.menu_cursor.index + 1)
+
                     elif event.key == pygame.K_LEFT:
                         if self.cursor.position_x > 0 and self.cursor.state is not CursorState.CHARMENU:
                             self.cursor.UpdatePosition(self.cursor.position_x - 1, self.cursor.position_y)
+                            if self.cursor.selected_unit is not None:
+                                self.indicators.empty()
+                                indicator_coordinates = self.movement_display.pathfinding.ReturnPath((self.cursor.selected_unit.position_x, self.cursor.selected_unit.position_y), (self.cursor.position_x, self.cursor.position_y))
+
+                                for indicator in indicator_coordinates:
+                                    self.indicators.add(PathIndicator(indicator[0], indicator[1]))
+                            
+
                     elif event.key == pygame.K_RIGHT:
                         if self.cursor.position_x < 9 and self.cursor.state is not CursorState.CHARMENU:
                             self.cursor.UpdatePosition(self.cursor.position_x + 1, self.cursor.position_y)
+                            if self.cursor.selected_unit is not None:
+                                self.indicators.empty()
+                                indicator_coordinates = self.movement_display.pathfinding.ReturnPath((self.cursor.selected_unit.position_x, self.cursor.selected_unit.position_y), (self.cursor.position_x, self.cursor.position_y))
 
+                                for indicator in indicator_coordinates:
+                                    self.indicators.add(PathIndicator(indicator[0], indicator[1]))
+                            
+
+                    
                 #When Z is pressed, check if there is a unit on tile
                     elif event.key == pygame.K_z:
 
@@ -133,11 +165,13 @@ class GameLoop():
                     elif event.key == pygame.K_c:
                         for unit_to_activate in self.units:
                             unit_to_activate.activate()
+
     
     def _render(self, unit):
             self.screen.fill((24, 184, 48))
-            self.sprite_renderer.update(self.cursor, self.units, self.movement_display.GetMovementRange(), self.movement_display.GetAttackRange())
+            self.sprite_renderer.update(self.cursor, self.units, self.indicators, self.movement_display.GetMovementRange(), self.movement_display.GetAttackRange())
             self.sprite_renderer.overlays.draw(self.screen)
+            self.sprite_renderer.indicators.draw(self.screen)
             self.sprite_renderer.sprites.draw(self.screen)
             self.screen.blit(self.cursor.surf, self.cursor.rect)
 
