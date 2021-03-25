@@ -10,20 +10,21 @@ class PathFinding():
 
         self.queue = heapdict()
 
-        self.distance = [[sys.maxsize for x in range(self.columns)] for y in range(self.rows)]
+        self.distance = [[50000 for x in range(self.columns)] for y in range(self.rows)]
         self.visited = [[False for x in range(self.columns)] for y in range(self.rows)]
         #needed later for reconstructing path
-        self.previous = {(x,y):(0,0) for x in range(self.columns) for y in range(self.rows)}
+        self.previous = {(x,y):0 for x in range(self.columns) for y in range(self.rows)}
 
         self.distance[cursorY][cursorX] = 0
         self.visited[cursorY][cursorX] = True
         self.queue[cursorY, cursorX] = 0
-
+        self.path_found = False
+        
     def _isValid(self, x, y):
         return x >= 0 and x < len(self.level[0]) and y >= 0 and y < len(self.level)
     
-    #The core algorithm
-    def traverse(self, row, column):
+    #Visit each of the node's neighbors
+    def traverse(self, row, column, destination=(11, 11)):
         for i in range (0, 4):
             new_row = row
             new_column = column
@@ -32,18 +33,23 @@ class PathFinding():
             elif i == 1:
                 new_row += 1
             elif i == 2:
-                new_column -= 1
-            elif i == 3:
                 new_column += 1
-            if not self._isValid(new_column,new_row):
+            elif i == 3:
+                new_column -= 1
+            if not self._isValid(new_column, new_row):
                 continue
             if self.visited[new_row][new_column]:
                 continue
 
-            node = (row,column)
-            self.previous[new_row,new_column] = node
+            node = (row, column)
+            self.previous[new_row, new_column] = node
+            if (new_row, new_column) == destination:
+                self.path_found = True
+                break
+
 
             node_distance = int(self.distance[row][column]) + int(self.level[new_row][new_column])
+
             self.queue[new_row, new_column] = node_distance
             self.distance[new_row][new_column] = node_distance
             self.visited[new_row][new_column] = True
@@ -70,7 +76,7 @@ class PathFinding():
     
     #Returns shortest path to point
     #Incomplete
-    def ReturnPath(self, start, destination):
+    def _constructPath(self, start, destination):
         path = []
         current_node = destination
         path.append(destination)
@@ -80,12 +86,19 @@ class PathFinding():
             path.append(current_node)
         
         return path
+
+    def ReturnPath(self, start, destination):
+        self.__init__(start[1], start[0], self.level)
+        while not self.path_found and len(self.queue) > 0:
+            head = self.queue.popitem()
+            row, column = head[0]
+            self.traverse(row, column, destination)
+        return self._constructPath(start, destination)
     
     #Run the algorithm to determine the distance between each point on the level and the cursor position
     def CalculateDistances(self, x, y):
         self.__init__(x, y, self.level)
-
-        while len(self.queue) > 0:
+        while not self.path_found and len(self.queue) > 0:
             head = self.queue.popitem()
             row, column = head[0]
             self.traverse(row, column)

@@ -59,13 +59,13 @@ class GameLoop():
 
                 #Handle arrow keys
                     elif event.key == pygame.K_UP:
-                        self._move_selection(0, -1, (10,10))
+                        self._move_selection(0, -1)
                     elif event.key == pygame.K_DOWN:
-                        self._move_selection(0, 1, (10,10))
+                        self._move_selection(0, 1)
                     elif event.key == pygame.K_LEFT:
-                        self._move_selection(-1, 0, (10,10))    
+                        self._move_selection(-1, 0)    
                     elif event.key == pygame.K_RIGHT:
-                        self._move_selection(1, 0, (10,10))
+                        self._move_selection(1, 0)
 
                 #Handle Z key press
                     elif event.key == pygame.K_z:
@@ -94,15 +94,22 @@ class GameLoop():
     
     def _get_path(self):
         self.indicators.empty()
+
         indicator_coordinates = self.movement_display.pathfinding.ReturnPath((self.cursor.selected_unit.position_x, self.cursor.selected_unit.position_y), (self.cursor.position_x, self.cursor.position_y))
         for indicator in indicator_coordinates[:-1]:
             if indicator in self.movement_display.allowed_tiles:
                 self.indicators.add(PathIndicator(indicator[0], indicator[1]))
     
+    def _valid_tile(self, x, y):
+        if x < 0 or y < 0 or y > 9 or x > 9:
+            return False
+        return True
+
     #Moves the cursor
-    def _move_selection(self, dx, dy, map_dimensions):
+    def _move_selection(self, dx, dy):
         if self.cursor.state != CursorState.CHARMENU:
-            self.cursor.UpdatePosition(self.cursor.position_x + dx, self.cursor.position_y + dy)
+            if self._valid_tile(self.cursor.position_x + dx, self.cursor.position_y + dy):
+                self.cursor.UpdatePosition(self.cursor.position_x + dx, self.cursor.position_y + dy)
             if self.cursor.selected_unit is not None and (self.cursor.position_x,self.cursor.position_y) in self.movement_display.allowed_tiles:
                 self._get_path()
         elif self.cursor.state == CursorState.CHARMENU:
