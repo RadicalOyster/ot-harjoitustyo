@@ -108,7 +108,9 @@ class GameLoop():
 
     #Moves the cursor
     def _move_selection(self, dx, dy):
-        if self.cursor.state == CursorState.MOVE:
+        if self.cursor.state == CursorState.MAP:
+            self.cursor.UpdatePosition(self.cursor.position_x + dx, self.cursor.position_y + dy)
+        elif self.cursor.state == CursorState.MOVE:
             if self._valid_tile(self.cursor.position_x + dx, self.cursor.position_y + dy):
                 self.cursor.UpdatePosition(self.cursor.position_x + dx, self.cursor.position_y + dy)
             if self.cursor.selected_unit is not None and (self.cursor.position_x,self.cursor.position_y) in self.movement_display.allowed_tiles:
