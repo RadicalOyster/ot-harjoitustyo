@@ -6,6 +6,7 @@ class CharMenuCommands(Enum):
     ITEM = 1
     WAIT = 2
 
+#Handles selection of menu options
 class MenuCursor(pygame.sprite.Sprite):
     def __init__(self):
         super(MenuCursor, self).__init__()

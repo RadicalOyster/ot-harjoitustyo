@@ -9,6 +9,7 @@ from game_loop import GameLoop
 from event_queue import EventQueue
 from game_clock import GameClock
 from pathfinding import PathFinding
+from target_selector import TargetSelector
 
 #Experimental junk
 def ReturnAttackOrder(attacker, defender):
@@ -47,7 +48,8 @@ def main():
 
     units = []
     units.append(Unit(1,1,name="Ferdinand", strength=8, speed=6, defense=5))
-    units.append(Unit(5,3,Alignment.ENEMY))
+    units.append(Unit(3,3,Alignment.ENEMY))
+    units.append(Unit(2,2,Alignment.ENEMY))
 
     pygame.font.init()
     font = pygame.font.SysFont("Arial", 20)
@@ -68,8 +70,9 @@ def main():
     ]
 
     pathfinding = PathFinding(1, 1, level)
+    target_selector = TargetSelector()
 
-    game_loop = GameLoop(screen, SpriteRenderer(), Cursor(), MenuCursor(), EventQueue(), units, MovementDisplay(pathfinding), font, clock)
+    game_loop = GameLoop(screen, SpriteRenderer(), Cursor(), MenuCursor(), EventQueue(), units, MovementDisplay(pathfinding), font, clock, target_selector)
 
     pygame.init()
     game_loop.start()

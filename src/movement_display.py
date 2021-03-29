@@ -13,6 +13,7 @@ class MovementDisplay(pygame.sprite.Sprite):
         self.hide_movement = False
         self.hide_attack = False
         self.pathfinding = pathfinding
+        self.current_ranges = pygame.sprite.Group()
     
     def UpdateMovementTiles(self, x, y, unit):
         self.movement_display.empty()
@@ -33,6 +34,18 @@ class MovementDisplay(pygame.sprite.Sprite):
         self.attack_tiles = attack_tiles
         for tile in attack_tiles:
             self.attack_display.add(AttackTile(tile[0], tile[1]))
+    
+    def GetCurrentAttackRanges(self, x, y, range):
+        self.pathfinding.CalculateDistances(x, y)
+        tiles_in_range = self.pathfinding.ReturnRanges(range)
+        for tile in tiles_in_range:
+            if (tile[0] == x and tile[1] == y):
+                continue
+            self.current_ranges.add(AttackTile(tile[0], tile[1]))
+        return tiles_in_range
+    
+    def ClearCurrentAttackRanges(self):
+        self.current_ranges = pygame.sprite.Group()
     
     def ClearMovementRange(self):
         self.movement_display.empty()

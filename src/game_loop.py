@@ -20,7 +20,7 @@ from pygame.locals import (
 )
 
 class GameLoop():
-    def __init__(self, screen, sprite_renderer, cursor, menu_cursor, event_queue, units, movement_display, font, clock):
+    def __init__(self, screen, sprite_renderer, cursor, menu_cursor, event_queue, units, movement_display, font, clock, target_selector):
         self.screen = screen
         self.sprite_renderer = sprite_renderer
         self.cursor = cursor
@@ -31,6 +31,7 @@ class GameLoop():
         self.movement_display = movement_display
         self.font = font
         self.clock = clock
+        self.target_selector = target_selector
         self.running = True
         self.disable_input = False
 
@@ -107,13 +108,16 @@ class GameLoop():
 
     #Moves the cursor
     def _move_selection(self, dx, dy):
-        if self.cursor.state != CursorState.CHARMENU:
+        if self.cursor.state == CursorState.MOVE:
             if self._valid_tile(self.cursor.position_x + dx, self.cursor.position_y + dy):
                 self.cursor.UpdatePosition(self.cursor.position_x + dx, self.cursor.position_y + dy)
             if self.cursor.selected_unit is not None and (self.cursor.position_x,self.cursor.position_y) in self.movement_display.allowed_tiles:
                 self._get_path()
         elif self.cursor.state == CursorState.CHARMENU:
             self.menu_cursor.ScrollMenu(self.menu_cursor.GetCommands(), self.menu_cursor.index + dy)
+        elif self.cursor.state == CursorState.ATTACK:
+            unit = self.target_selector.ScrollSelection(dx + dy)
+            self.cursor.UpdatePosition(self.target_selector.GetSelection()[0], self.target_selector.GetSelection()[1])
 
     def _handle_confirm(self, unit):
         #If player has selected a unit and presses Z on an empty tile in range, move unit
@@ -126,15 +130,21 @@ class GameLoop():
                     self.movement_display.hide_attack = True
                     self.indicators.empty()
                     self.cursor.state = CursorState.CHARMENU
-                #If already in CHARMENU, button confirms menu selection
+            #If already in CHARMENU, button confirms menu selection
             elif unit == self.cursor.selected_unit:
                 if self.cursor.state == CursorState.CHARMENU:
-                    if (self.menu_cursor.index == CharMenuCommands.WAIT.value):
+                    if self.menu_cursor.index == CharMenuCommands.WAIT.value:
                         self.movement_display.ClearMovementRange()
                         self.cursor.selected_unit.deactivate()
                         self.cursor.selected_unit = None
                         self.cursor.state = CursorState.MAP
                         self.menu_cursor.ResetCursor()
+                    elif self.menu_cursor.index == CharMenuCommands.ATTACK.value:
+                        self.cursor.state = CursorState.ATTACK
+                        ranges = self.movement_display.GetCurrentAttackRanges(self.cursor.position_x, self.cursor.position_y, self.cursor.selected_unit.range)
+                        self.target_selector.UpdateTiles(ranges, self.units)
+                        self.cursor.UpdatePosition(self.target_selector.GetSelection()[0], self.target_selector.GetSelection()[1])
+                        self.sprite_renderer.show_indicators = False
                     else:
                         pass
                 else:
@@ -160,12 +170,16 @@ class GameLoop():
             self.cursor.UpdatePosition(self.cursor.selected_unit.position_x, self.cursor.selected_unit.position_y)
             self.movement_display.hide_movement = False
             self.movement_display.hide_attack = False
+        elif self.cursor.state == CursorState.ATTACK:
+            self.cursor.state = CursorState.CHARMENU
+            self.movement_display.ClearCurrentAttackRanges()
+            self.cursor.UpdatePosition(self.cursor.selected_unit.position_x, self.cursor.selected_unit.position_y)
     
 
 
     def _render(self, unit):
             self.screen.fill((24, 184, 48))
-            self.sprite_renderer.update(self.cursor, self.units, self.indicators, self.movement_display.GetMovementRange(), self.movement_display.GetAttackRange())
+            self.sprite_renderer.update(self.cursor, self.units, self.indicators, self.movement_display.GetMovementRange(), self.movement_display.GetAttackRange(), self.movement_display.current_ranges)
             self.sprite_renderer.overlays.draw(self.screen)
             if self.sprite_renderer.show_indicators:
                 self.sprite_renderer.indicators.draw(self.screen)
@@ -227,4 +241,6 @@ class GameLoop():
             for movetile in self.movement_display.GetMovementRange():
                 movetile.updateAnimation()
             for attacktile in self.movement_display.GetAttackRange():
-                attacktile.updateAnimation()    
+                attacktile.updateAnimation()
+            for attacktile in self.movement_display.current_ranges:
+                attacktile.updateAnimation()
