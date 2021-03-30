@@ -5,6 +5,7 @@ from cursor import CursorState
 from menu_cursor import CharMenuCommands
 from unit import Alignment
 from path_indicator import PathIndicator
+from combat import Combat
 
 from pygame.locals import (
     K_UP,
@@ -105,6 +106,16 @@ class GameLoop():
         if x < 0 or y < 0 or y > 9 or x > 9:
             return False
         return True
+    
+    def _deactivate_selected_unit(self):
+        self.movement_display.ClearMovementRange()
+        self.movement_display.ClearCurrentAttackRanges()
+        self.cursor.selected_unit.deactivate()
+        self.cursor.UpdatePosition(self.cursor.selected_unit.position_x, self.cursor.selected_unit.position_y)
+        self.cursor.selected_unit = None
+        self.cursor.state = CursorState.MAP
+        self.menu_cursor.ResetCursor()
+        self.target_selector.ClearTiles()
 
     #Moves the cursor
     def _move_selection(self, dx, dy):
@@ -125,6 +136,7 @@ class GameLoop():
         #If player has selected a unit and presses Z on an empty tile in range, move unit
         #If the selected unit is the same as the unit on that tile, change cursor state to CHARMENU
         if self.cursor.selected_unit is not None:
+
             if unit is None:
                 if (self.cursor.position_x, self.cursor.position_y) in self.movement_display.GetAllowedTiles():
                     self.cursor.selected_unit.updatePosition(self.cursor.position_x, self.cursor.position_y)
@@ -132,27 +144,32 @@ class GameLoop():
                     self.movement_display.hide_attack = True
                     self.indicators.empty()
                     self.cursor.state = CursorState.CHARMENU
+
             #If already in CHARMENU, button confirms menu selection
             elif unit == self.cursor.selected_unit:
                 if self.cursor.state == CursorState.CHARMENU:
+
                     if self.menu_cursor.index == CharMenuCommands.WAIT.value:
-                        self.movement_display.ClearMovementRange()
-                        self.cursor.selected_unit.deactivate()
-                        self.cursor.selected_unit = None
-                        self.cursor.state = CursorState.MAP
-                        self.menu_cursor.ResetCursor()
+                        self._deactivate_selected_unit()
+
                     elif self.menu_cursor.index == CharMenuCommands.ATTACK.value:
                         self.cursor.state = CursorState.ATTACK
                         ranges = self.movement_display.GetCurrentAttackRanges(self.cursor.position_x, self.cursor.position_y, self.cursor.selected_unit.range)
                         self.target_selector.UpdateTiles(ranges, self.units)
                         self.cursor.UpdatePosition(self.target_selector.GetSelection()[0], self.target_selector.GetSelection()[1])
                         self.sprite_renderer.show_indicators = False
-                    else:
-                        pass
+
                 else:
                     self.cursor.state = CursorState.CHARMENU
                     self.movement_display.hide_movement = True
                     self.movement_display.hide_attack = True
+
+            elif self.cursor.state == CursorState.ATTACK:
+                dead_unit = Combat(self.cursor.selected_unit, unit)
+                if dead_unit is not None:
+                    self.units.remove(dead_unit)
+                self._deactivate_selected_unit()
+
             #If player has not selected a unit and there is a unit on the tile, select that unit if it is an active ally and display its movement range
         else:
             if unit is not None and unit.alignment is Alignment.ALLY and unit.has_moved == False:
@@ -176,6 +193,7 @@ class GameLoop():
             self.cursor.state = CursorState.CHARMENU
             self.movement_display.ClearCurrentAttackRanges()
             self.cursor.UpdatePosition(self.cursor.selected_unit.position_x, self.cursor.selected_unit.position_y)
+            self.target_selector.ClearTiles()
     
 
 
@@ -196,11 +214,11 @@ class GameLoop():
 
                 if self.cursor.selected_unit is not None:
                     unit_name = self.font.render(str(self.cursor.selected_unit.name), False, (255,255,255))
-                    unit_hp = self.font.render("HP: " + str(self.cursor.selected_unit.max_hp) + "/" + str(self.cursor.selected_unit.current_hp), False, (222,222,222))
+                    unit_hp = self.font.render("HP: " + str(self.cursor.selected_unit.current_hp) + "/" + str(self.cursor.selected_unit.max_hp), False, (222,222,222))
                 
                 else:
                     unit_name = self.font.render(str(unit.name), False, (222,222,222))
-                    unit_hp = self.font.render("HP: " + str(unit.max_hp) + "/" + str(unit.current_hp), False, (222,222,222))
+                    unit_hp = self.font.render("HP: " + str(unit.current_hp) + "/" + str(unit.max_hp), False, (222,222,222))
                 unit_display.blit(unit_name, (10,4))
                 unit_display.blit(unit_hp,(10,24))
                 self.screen.blit(unit_display, (10,5))

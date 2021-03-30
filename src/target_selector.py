@@ -19,6 +19,7 @@ class TargetSelector():
     def ClearTiles(self):
         self.tiles = []
         self.tiles_with_units = []
+        self.selection = 0
     
     def ScrollSelection(self, direction):
         if self.selection == 0 and direction == -1:
@@ -32,4 +33,6 @@ class TargetSelector():
         self.selection = selection
     
     def GetSelection(self):
-        return self.tiles_with_units[self.selection]
+        if len(self.tiles_with_units) > 0:
+            return self.tiles_with_units[self.selection]
+        return (-1,-1)
