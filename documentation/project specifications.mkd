@@ -44,7 +44,7 @@ After combat, both units' health will be updated and dead units removed from the
 * Allied units under the player's control and enemy units
 * Units with individual stats
 * Basic combat (units can engage in battle and disappear from the map if their hit points drop to 0)
-* Pathfinding and display for units' movement- and attack ranges
+* Pathfinding and display for units' movement- and attack ranges (utilizes Dijkstra's algorithm)
 * Terrain with varying movement costs
 
 
