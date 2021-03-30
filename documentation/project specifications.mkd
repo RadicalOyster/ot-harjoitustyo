@@ -1,0 +1,63 @@
+# Project Specifications
+
+## Purpose of the application
+
+This is a simple grid-based strategy game in the vein of [Fire Emblem](https://en.wikipedia.org/wiki/Fire_Emblem:_Shadow_Dragon_and_the_Blade_of_Light). The player takes turns with the AI to guide their units in battle against the opposing army. 
+
+## Users
+
+Being a simple single player game with no login capabilities or private user data, the application has no need for different user roles.
+
+## User interface and the basics of gameplay
+
+The core gameplay takes place on a map represented by a 2-dimensional grid as seen in the screenshot below. The player interacts with the game through a cursor that moves along the grid with the arrow keys on the keyboard. Friendly units are color coded in blue and enemy units in red.
+
+The Z and X key respectively are used to confirm or cancel actions.
+
+<img src="Fill In The Link">
+
+While the cursor is hovering over a unit, statistics about that unit such as its hit points are displayed. Additionally, if the cursor is hovering over an ally unit, the Z key will display the tiles that unit can reach in green and tiles beyond its movement range that it can reach with its attack in red as seen below.
+
+<img src="Fill In The Link 2">
+
+In this state, moving the cursor to any of the tiles highlighted in blue will display the path to that tile and pressing the Z key will move the unit to the selected tile. Whether the unit moved or not, the Z key will bring up a menu from which the player can choose the unit's next action.
+
+<img src="Fill In The Link 3">
+
+The up and down arrow keys will scroll through the menu and the Z button will confirm selection. The wait option will simply deactivate the unit until the end of the turn after which the player can move it again. An inactive unit turns gray to indicate that it has already taken its action.
+
+The items option will allow the unit to manage its inventory and use items, such as potions to restore health.
+
+The attack option will display tiles within the unit's attack range in red and allow the player to cycle through enemy units in reach, and the Z key will confirm the player's selection and commence battle.
+
+<img src="Fill In The Link 4">
+
+In combat, the units will take turns to attack each other with the initiating unit having intiative and getting the first blow. The resulting damage from attacks is calculated based on each unit's individual attributes and speedier units may be able to strike twice.
+
+<img src="Fill In The Link 5">
+
+After combat, both units' health will be updated and dead units removed from the map. The selected unit will also become inactive as it has taken its action for the turn.
+
+## Basic functionality
+
+* Cursor movement and unit selection
+* Allied units under the player's control and enemy units
+* Units with individual stats
+* Basic combat (units can engage in battle and disappear from the map if their hit points drop to 0)
+* Pathfinding and display for units' movement- and attack ranges
+* Terrain with varying movement costs
+
+
+### Not yet implemented
+* Basic AI to control enemy actions
+* UI elements to allow the player to inspect a unit's attributes in detail
+* Basic unit inventory system
+
+## Features for future development
+
+After basic functionality has been implemented, work will begin on the following features if time allows it:
+
+* Window view scrolling, allowing for larger maps
+* Equipment system allowing units to swap between different types of weapons
+* Varying terrain movement cost depending on unit type (eg. cavalry might sufffer a movement penalty moving through marsh land while infarnty can move unimpeded)
+* Experience and level up system to allow characters to grow
