@@ -106,5 +106,3 @@ class PathFinding():
             head = self.queue.popitem()
             row, column = head[0]
             self.traverse(row, column)
-        self.PrintRange(8)
-        self.PrintDistances()

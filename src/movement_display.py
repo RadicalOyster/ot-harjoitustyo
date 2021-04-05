@@ -35,13 +35,13 @@ class MovementDisplay(pygame.sprite.Sprite):
         for tile in attack_tiles:
             self.attack_display.add(AttackTile(tile[0], tile[1], offset_X, offset_Y))
     
-    def GetCurrentAttackRanges(self, x, y, range):
+    def GetCurrentAttackRanges(self, x, y, range, offset_x, offset_y):
         self.pathfinding.CalculateDistances(x, y)
         tiles_in_range = self.pathfinding.ReturnRanges(range)
         for tile in tiles_in_range:
             if (tile[0] == x and tile[1] == y):
                 continue
-            self.current_ranges.add(AttackTile(tile[0], tile[1]))
+            self.current_ranges.add(AttackTile(tile[0], tile[1], offset_x, offset_y))
         return tiles_in_range
     
     def ClearCurrentAttackRanges(self):

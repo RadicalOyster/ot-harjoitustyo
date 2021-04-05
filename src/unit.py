@@ -13,7 +13,7 @@ class Unit(pygame.sprite.Sprite):
         super().__init__()
 
         self.unit_class = "fighter"
-        self.movement = 8
+        self.movement = 3
         self.sprites = []
         self.active_sprite = 0
         self.alignment = alignment
@@ -57,17 +57,11 @@ class Unit(pygame.sprite.Sprite):
         self.rect.x = x * 64 - offset_X * 64
         self.rect.y = y * 64 - offset_Y * 64
     
-    def revertPosition(self):
+    def revertPosition(self, offset_x, offset_y):
         self.position_x = self.old_position_x
         self.position_y = self.old_position_y
-        self.rect.x = self.old_position_x * 64
-        self.rect.y = self.old_position_y * 64
-    
-    def fineTunePosition(self, dx, dy):
-        self.position_x += dx
-        self.position_y += yx
-        self.rect.x += dx
-        self.rect.y += dy
+        self.rect.x = self.old_position_x * 64 - offset_x * 64 
+        self.rect.y = self.old_position_y * 64 - offset_y * 64
     
     def rememberPosition(self, x, y):
         self.old_position_x = x
