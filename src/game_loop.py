@@ -21,7 +21,7 @@ from pygame.locals import (
 )
 
 class GameLoop():
-    def __init__(self, screen, sprite_renderer, cursor, menu_cursor, event_queue, units, movement_display, font, clock, target_selector):
+    def __init__(self, screen, sprite_renderer, cursor, menu_cursor, event_queue, units, movement_display, font, clock, target_selector, camera, level):
         self.screen = screen
         self.sprite_renderer = sprite_renderer
         self.cursor = cursor
@@ -33,6 +33,8 @@ class GameLoop():
         self.font = font
         self.clock = clock
         self.target_selector = target_selector
+        self.camera = camera
+        self.level = level
         self.running = True
         self.disable_input = False
 
@@ -86,8 +88,8 @@ class GameLoop():
     def _select_unit(self, unit):
         self.movement_display.hide_movement = False
         self.movement_display.hide_attack = False
-        self.movement_display.UpdateMovementTiles(self.cursor.position_x, self.cursor.position_y, unit)
-        self.movement_display.UpdateAttackTiles(self.cursor.position_x, self.cursor.position_y, unit)
+        self.movement_display.UpdateMovementTiles(self.cursor.position_x, self.cursor.position_y, unit, self.camera.offset_X, self.camera.offset_Y)
+        self.movement_display.UpdateAttackTiles(self.cursor.position_x, self.cursor.position_y, unit, self.camera.offset_X, self.camera.offset_Y)
         self.cursor.selected_unit = unit
         self.cursor.selected_unit.old_position_x = self.cursor.selected_unit.position_x
         self.cursor.selected_unit.old_position_y = self.cursor.selected_unit.position_y
@@ -100,10 +102,10 @@ class GameLoop():
         indicator_coordinates = self.movement_display.pathfinding.ReturnPath((self.cursor.selected_unit.position_x, self.cursor.selected_unit.position_y), (self.cursor.position_x, self.cursor.position_y))
         for indicator in indicator_coordinates[:-1]:
             if indicator in self.movement_display.allowed_tiles:
-                self.indicators.add(PathIndicator(indicator[0], indicator[1]))
+                self.indicators.add(PathIndicator(indicator[0], indicator[1], self.camera.offset_X, self.camera.offset_Y))
     
     def _valid_tile(self, x, y):
-        if x < 0 or y < 0 or y > 9 or x > 9:
+        if x < 0 or y < 0 or y > (len(self.level) - 1) or x > (len(self.level[0]) - 1):
             return False
         return True
     
@@ -111,26 +113,54 @@ class GameLoop():
         self.movement_display.ClearMovementRange()
         self.movement_display.ClearCurrentAttackRanges()
         self.cursor.selected_unit.deactivate()
-        self.cursor.UpdatePosition(self.cursor.selected_unit.position_x, self.cursor.selected_unit.position_y)
+        self.cursor.UpdatePosition(self.cursor.selected_unit.position_x, self.cursor.selected_unit.position_y, self.camera.offset_X, self.camera.offset_Y)
         self.cursor.selected_unit = None
         self.cursor.state = CursorState.MAP
         self.menu_cursor.ResetCursor()
         self.target_selector.ClearTiles()
+    
+    def _update_offsets(self):
+        for unit in self.units:
+            unit.updateOffset(self.camera.offset_X, self.camera.offset_Y)
+        for tile in self.movement_display.movement_display:
+            tile.updateOffset(self.camera.offset_X, self.camera.offset_Y)
+        for tile in self.movement_display.attack_display:
+            tile.updateOffset(self.camera.offset_X, self.camera.offset_Y)
+        for indicator in self.indicators:
+            indicator.updateOffset(self.camera.offset_X, self.camera.offset_Y)
 
-    #Moves the cursor
+
+    #Moves the camera and cursor
     def _move_selection(self, dx, dy):
+        if dx == 1 and self.cursor.position_x <= len(self.level[0]) - 1 and self.cursor.position_x - self.camera.offset_X >= 7:
+            self.camera.offset_X += 1
+
+        if dx == -1 and self.cursor.position_x -self.camera.offset_X > 0 and self.cursor.position_x - self.camera.offset_X < 3 and self.camera.offset_X > 0:
+            self.camera.offset_X -= 1
+
+        if dy == 1 and self.cursor.position_y <= len(self.level) - 1 and self.cursor.position_y - self.camera.offset_Y >= 7:
+            self.camera.offset_Y += 1
+        
+        if dy == -1 and self.cursor.position_y > 0 and self.cursor.position_y - self.camera.offset_Y < 3 and self.camera.offset_Y > 0:
+            self.camera.offset_Y -= 1
+
+        if self.cursor.state != CursorState.CHARMENU and self.cursor.state != CursorState.ATTACK:
+            self._update_offsets()
+
         if self.cursor.state == CursorState.MAP:
-            self.cursor.UpdatePosition(self.cursor.position_x + dx, self.cursor.position_y + dy)
+            if self._valid_tile(self.cursor.position_x + dx, self.cursor.position_y + dy):
+                self.cursor.UpdatePosition(self.cursor.position_x + dx, self.cursor.position_y + dy, self.camera.offset_X, self.camera.offset_Y)
         elif self.cursor.state == CursorState.MOVE:
             if self._valid_tile(self.cursor.position_x + dx, self.cursor.position_y + dy):
-                self.cursor.UpdatePosition(self.cursor.position_x + dx, self.cursor.position_y + dy)
-            if self.cursor.selected_unit is not None and (self.cursor.position_x,self.cursor.position_y) in self.movement_display.allowed_tiles:
+                self.cursor.UpdatePosition(self.cursor.position_x + dx, self.cursor.position_y + dy, self.camera.offset_X, self.camera.offset_Y)
+            if self.cursor.selected_unit is not None and (self.cursor.position_x, self.cursor.position_y) in self.movement_display.allowed_tiles:
                 self._get_path()
         elif self.cursor.state == CursorState.CHARMENU:
             self.menu_cursor.ScrollMenu(self.menu_cursor.GetCommands(), self.menu_cursor.index + dy)
         elif self.cursor.state == CursorState.ATTACK:
             unit = self.target_selector.ScrollSelection(dx + dy)
-            self.cursor.UpdatePosition(self.target_selector.GetSelection()[0], self.target_selector.GetSelection()[1])
+            self.cursor.UpdatePosition(self.target_selector.GetSelection()[0], self.target_selector.GetSelection()[1], self.camera.offset_X, self.camera.offset_Y)
+            
 
     def _handle_confirm(self, unit):
         #If player has selected a unit and presses Z on an empty tile in range, move unit
@@ -156,7 +186,7 @@ class GameLoop():
                         self.cursor.state = CursorState.ATTACK
                         ranges = self.movement_display.GetCurrentAttackRanges(self.cursor.position_x, self.cursor.position_y, self.cursor.selected_unit.range)
                         self.target_selector.UpdateTiles(ranges, self.units)
-                        self.cursor.UpdatePosition(self.target_selector.GetSelection()[0], self.target_selector.GetSelection()[1])
+                        self.cursor.UpdatePosition(self.target_selector.GetSelection()[0], self.target_selector.GetSelection()[1], self.camera.offset_X, self.camera.offset_Y)
                         self.sprite_renderer.show_indicators = False
 
                 else:
@@ -186,13 +216,13 @@ class GameLoop():
         elif self.cursor.state == CursorState.CHARMENU:
             self.cursor.state = CursorState.MOVE
             self.cursor.selected_unit.revertPosition()
-            self.cursor.UpdatePosition(self.cursor.selected_unit.position_x, self.cursor.selected_unit.position_y)
+            self.cursor.UpdatePosition(self.cursor.selected_unit.position_x, self.cursor.selected_unit.position_y, self.camera.offset_X, self.camera.offset_Y)
             self.movement_display.hide_movement = False
             self.movement_display.hide_attack = False
         elif self.cursor.state == CursorState.ATTACK:
             self.cursor.state = CursorState.CHARMENU
             self.movement_display.ClearCurrentAttackRanges()
-            self.cursor.UpdatePosition(self.cursor.selected_unit.position_x, self.cursor.selected_unit.position_y)
+            self.cursor.UpdatePosition(self.cursor.selected_unit.position_x, self.cursor.selected_unit.position_y, self.camera.offset_X, self.camera.offset_Y)
             self.target_selector.ClearTiles()
     
 
@@ -250,8 +280,12 @@ class GameLoop():
             #Add env variable to toggle this
             cursor_pos = self.font.render("x: " + str(self.cursor.position_x) + " y: " + str(self.cursor.position_y), False, (222,222,222))
             cursor_state = self.font.render(self.cursor.state.name, False, (222,222,222))
+
+            camera_offset = self.font.render("Offset: (" + str(self.camera.offset_X) + ":" + str(self.camera.offset_Y) + ")", False, (222,222,222))
+
             self.screen.blit(cursor_pos, (560,4))
             self.screen.blit(cursor_state, (440, 4))
+            self.screen.blit(camera_offset, (440, 24))
 
             pygame.display.flip()
     

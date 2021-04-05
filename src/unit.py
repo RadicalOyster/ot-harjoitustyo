@@ -9,7 +9,7 @@ class Alignment(Enum):
 sprite_suffixes = ["", "_e"]
 
 class Unit(pygame.sprite.Sprite):
-    def __init__(self, x=0, y=0, alignment=Alignment.ALLY, hp=15, name="Fighter", strength=5, speed=2, defense=3):
+    def __init__(self, x=0, y=0, alignment=Alignment.ALLY, hp=15, name="Fighter", strength=5, speed=2, defense=3, offset_X=0, offset_Y=0):
         super().__init__()
 
         self.unit_class = "fighter"
@@ -46,16 +46,16 @@ class Unit(pygame.sprite.Sprite):
         self.old_position_y = y
 
         self.rect = self.image.get_rect()
-        self.rect.x = x * 64
-        self.rect.y = y * 64
+        self.rect.x = x * 64 - offset_X * 64
+        self.rect.y = y * 64 - offset_Y * 64
 
-    def updatePosition(self, x, y):
+    def updatePosition(self, x, y, offset_X=0, offset_Y=0):
         self.old_position_x = self.position_x
         self.old_position_y = self.position_y
         self.position_x = x
         self.position_y = y
-        self.rect.x = x * 64
-        self.rect.y = y * 64
+        self.rect.x = x * 64 - offset_X * 64
+        self.rect.y = y * 64 - offset_Y * 64
     
     def revertPosition(self):
         self.position_x = self.old_position_x
@@ -81,6 +81,10 @@ class Unit(pygame.sprite.Sprite):
         if not self.has_moved:            
             self.image = pygame.transform.scale(self.sprites[int(self.active_sprite)], (64,64))
     
+    def updateOffset(self, offset_x, offset_y):
+        self.rect.x = self.position_x * 64 - offset_x * 64
+        self.rect.y = self.position_y * 64 - offset_y * 64
+
     def deactivate(self):
         self.has_moved = True
         self.image = pygame.transform.scale(load_image("fighter_inactive.png"), (64,64))

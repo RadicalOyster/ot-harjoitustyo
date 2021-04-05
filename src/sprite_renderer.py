@@ -9,7 +9,7 @@ class SpriteRenderer(pygame.sprite.Sprite):
         self.overlays = pygame.sprite.Group()
         self.show_indicators = False
 
-    def update(self, cursor, units, indicators, movementranges, attackranges, current_attack_ranges):
+    def update(self, cursor, units, indicators, movementranges, attackranges, current_attack_ranges, offset_X=0, offset_Y=0):
         self.sprites.empty()
         self.overlays.empty()
         self.indicators.empty()
