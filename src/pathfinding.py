@@ -24,7 +24,7 @@ class PathFinding():
         return x >= 0 and x < len(self.level[0]) and y >= 0 and y < len(self.level)
     
     #Visit each of the node's neighbors
-    def traverse(self, row, column, destination=(11, 11)):
+    def traverse(self, row, column, destination=(-1, -1)):
         for i in range (0, 4):
             new_row = row
             new_column = column
@@ -41,9 +41,9 @@ class PathFinding():
             if self.visited[new_row][new_column]:
                 continue
 
-            node = (row, column)
-            self.previous[new_row, new_column] = node
-            if (new_row, new_column) == destination:
+            node = (column, row)
+            self.previous[new_column, new_row] = node
+            if (new_column, new_row) == destination:
                 self.path_found = True
                 break
 
@@ -63,6 +63,12 @@ class PathFinding():
                     print("*",end=" ")
             print("")
     
+    def PrintDistances(self):
+        for line in self.distance:
+            for value in line:
+                print(value,end=" ")
+            print("")
+    
     #Returns a list of reachable nodes
     def ReturnRanges(self, reach):
         reachableSpaces = []
@@ -80,15 +86,13 @@ class PathFinding():
         path = []
         current_node = destination
         path.append(destination)
-        
         while current_node != start:
             current_node = self.previous[current_node]
             path.append(current_node)
-        
         return path
 
     def ReturnPath(self, start, destination):
-        self.__init__(start[1], start[0], self.level)
+        self.__init__(start[0], start[1], self.level)
         while not self.path_found and len(self.queue) > 0:
             head = self.queue.popitem()
             row, column = head[0]
@@ -102,3 +106,5 @@ class PathFinding():
             head = self.queue.popitem()
             row, column = head[0]
             self.traverse(row, column)
+        self.PrintRange(8)
+        self.PrintDistances()

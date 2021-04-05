@@ -169,7 +169,7 @@ class GameLoop():
 
             if unit is None:
                 if (self.cursor.position_x, self.cursor.position_y) in self.movement_display.GetAllowedTiles():
-                    self.cursor.selected_unit.updatePosition(self.cursor.position_x, self.cursor.position_y)
+                    self.cursor.selected_unit.updatePosition(self.cursor.position_x, self.cursor.position_y, self.camera.offset_X, self.camera.offset_Y)
                     self.movement_display.hide_movement = True
                     self.movement_display.hide_attack = True
                     self.indicators.empty()

@@ -13,7 +13,7 @@ class Unit(pygame.sprite.Sprite):
         super().__init__()
 
         self.unit_class = "fighter"
-        self.movement = 3
+        self.movement = 8
         self.sprites = []
         self.active_sprite = 0
         self.alignment = alignment
