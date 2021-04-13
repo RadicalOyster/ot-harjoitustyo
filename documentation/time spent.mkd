@@ -1,4 +1,4 @@
-# Time spent
+ # Time spent
 
 | day | time | what I did  |
 | :----:|:-----| :-----|
@@ -16,4 +16,9 @@
 | 29.3  | 3    | began work on implementing the attack command
 | 30.3  | 1    | bug fixes and basic implementation of combat
 | 30.3  | 2    | documentation
-| total | 40   | | 
+| 5.4   | 2    | implemented a scrolling camera
+| 5.4   | 2    | fixed a major bug in pathfinding
+| 5.4   | 4    | fixed bugs arising from camera implementation
+| 12.4  | 1.5  | week 3 exercises
+| 13.4  | 0.5  | week 3 exercises
+| total | 51   | | 

@@ -46,6 +46,7 @@ After combat, both units' health will be updated and dead units removed from the
 * Basic combat (units can engage in battle and disappear from the map if their hit points drop to 0)
 * Pathfinding and display for units' movement- and attack ranges (utilizes Dijkstra's algorithm)
 * Terrain with varying movement costs
+* Scrolling camera
 
 
 ### Not yet implemented
@@ -56,8 +57,6 @@ After combat, both units' health will be updated and dead units removed from the
 ## Features for future development
 
 After basic functionality has been implemented, work will begin on the following features if time allows it:
-
-* Window view scrolling, allowing for larger maps
 * Equipment system allowing units to swap between different types of weapons
 * Varying terrain movement cost depending on unit type (eg. cavalry might sufffer a movement penalty moving through marsh land while infarnty can move unimpeded)
 * Experience and level up system to allow characters to grow
