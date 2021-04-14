@@ -6,3 +6,7 @@ def start(ctx):
         ctx.run("python3 src/index.py")
     except:
         ctx.run("python src/index.py")
+
+@task
+def test(ctx):
+    ctx.run("pytest src")

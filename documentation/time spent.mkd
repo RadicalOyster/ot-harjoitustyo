@@ -2,7 +2,7 @@
 
 | day | time | what I did  |
 | :----:|:-----| :-----|
-| 15.3. | 2    | deciding on project, doing week 1 exercises |
+| 15.3. | 2    | deciding on project |
 | 16.3. | 4    | research for project structure and pathfinding algorithms, 
 | 17.3. | 5    | coded a basic interface with controls and pathfinding, began work on more features |
 | 19.3. | 4    | bug fixes, cleaning up the code, added enemy units and other features|
@@ -12,13 +12,10 @@
 | 20.3. | 4    | major refactoring |
 | 24.3  | 5    | more refactoring |
 | 25.3  | 2    | bug fixes |
-| 29.3  | 2    | week 2 exercises
 | 29.3  | 3    | began work on implementing the attack command
 | 30.3  | 1    | bug fixes and basic implementation of combat
 | 30.3  | 2    | documentation
 | 5.4   | 2    | implemented a scrolling camera
 | 5.4   | 2    | fixed a major bug in pathfinding
 | 5.4   | 4    | fixed bugs arising from camera implementation
-| 12.4  | 1.5  | week 3 exercises
-| 13.4  | 0.5  | week 3 exercises
-| total | 51   | | 
+| total | 47   | | 
