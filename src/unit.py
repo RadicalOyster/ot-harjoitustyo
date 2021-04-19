@@ -40,6 +40,8 @@ class Unit(pygame.sprite.Sprite):
         self.speed = speed
         self.defense = defense
 
+        self.items = []
+
         self.position_x = x
         self.position_y = y
         self.old_position_x = x
@@ -86,3 +88,11 @@ class Unit(pygame.sprite.Sprite):
     def activate(self):
         self.has_moved = False
         self.image = pygame.transform.scale(self.sprites[int(self.active_sprite)], (64,64))
+    
+    def updateHP(self, damage):
+        self.current_hp -= damage
+        if (self.current_hp <= 0):
+            self.dead = True
+
+        elif (self.current_hp > self.max_hp):
+            self.current_hp = self.max_hp

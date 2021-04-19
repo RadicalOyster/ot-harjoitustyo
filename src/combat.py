@@ -17,11 +17,10 @@ def Combat(attacker, defender):
         current_attacker = combatants[0]
         current_defender = combatants[1]
         total_damage = current_attacker.strength + current_attacker.might - current_defender.defense
-        current_defender.current_hp -= total_damage
+        current_defender.updateHP(total_damage)
 
         print(current_defender.name, " took ", total_damage, " damage, hp remaining: ", current_defender.current_hp)
-        if current_defender.current_hp < 0:
-            current_defender.dead = True
+        if current_defender.dead:
             print(current_defender.name, " has died, ending combat")
             return current_defender
     return None

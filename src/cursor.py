@@ -6,7 +6,8 @@ class CursorState(Enum):
     MOVE = 1
     CHARMENU = 2
     ATTACK = 3
-    INACTIVE = 4
+    ITEM = 4
+    INACTIVE = 5
 
 class Cursor(pygame.sprite.Sprite):
     def __init__(self, x, y, offset_x=0, offset_y=0):

@@ -1,11 +1,12 @@
 from invoke import task
+import os
 
 @task
 def start(ctx):
-    try:
-        ctx.run("python3 src/index.py")
-    except:
+    if (os.name == "nt"):
         ctx.run("python src/index.py")
+    else: 
+        ctx.run("python3 src/index.py")
 
 @task
 def test(ctx):

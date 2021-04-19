@@ -6,6 +6,7 @@ from menu_cursor import CharMenuCommands
 from unit import Alignment
 from path_indicator import PathIndicator
 from combat import Combat
+from item import itemNames
 
 from pygame.locals import (
     K_UP,
@@ -21,7 +22,7 @@ from pygame.locals import (
 )
 
 class GameLoop():
-    def __init__(self, screen, sprite_renderer, cursor, menu_cursor, event_queue, units, movement_display, font, clock, target_selector, camera, level):
+    def __init__(self, screen, sprite_renderer, cursor, menu_cursor, event_queue, units, movement_display, font, font2, clock, target_selector, camera, level):
         self.screen = screen
         self.sprite_renderer = sprite_renderer
         self.cursor = cursor
@@ -31,6 +32,7 @@ class GameLoop():
         self.indicators = pygame.sprite.Group()
         self.movement_display = movement_display
         self.font = font
+        self.font2 = font2
         self.clock = clock
         self.target_selector = target_selector
         self.camera = camera
@@ -116,7 +118,7 @@ class GameLoop():
         self.cursor.UpdatePosition(self.cursor.selected_unit.position_x, self.cursor.selected_unit.position_y, self.camera.offset_X, self.camera.offset_Y)
         self.cursor.selected_unit = None
         self.cursor.state = CursorState.MAP
-        self.menu_cursor.ResetCursor()
+        self.menu_cursor.SetCharState()
         self.target_selector.ClearTiles()
     
     def _update_offsets(self):
@@ -132,7 +134,7 @@ class GameLoop():
 
     #Moves the camera and cursor
     def _move_selection(self, dx, dy):
-        if self.cursor.state != CursorState.ATTACK:
+        if self.cursor.state == CursorState.MAP or self.cursor.state == CursorState.MOVE:
             if dx == 1 and self.cursor.position_x <= len(self.level[0]) - 1 and self.cursor.position_x - self.camera.offset_X >= 7:
                 self.camera.offset_X += 1
 
@@ -145,22 +147,28 @@ class GameLoop():
             if dy == -1 and self.cursor.position_y > 0 and self.cursor.position_y - self.camera.offset_Y < 3 and self.camera.offset_Y > 0:
                 self.camera.offset_Y -= 1
 
-            if self.cursor.state != CursorState.CHARMENU and self.cursor.state != CursorState.ATTACK:
+            if self.cursor.state != CursorState.CHARMENU and self.cursor.state != CursorState.ATTACK and self.cursor.state != CursorState.ITEM:
                 self._update_offsets()
 
         if self.cursor.state == CursorState.MAP:
             if self._valid_tile(self.cursor.position_x + dx, self.cursor.position_y + dy):
                 self.cursor.UpdatePosition(self.cursor.position_x + dx, self.cursor.position_y + dy, self.camera.offset_X, self.camera.offset_Y)
+
         elif self.cursor.state == CursorState.MOVE:
             if self._valid_tile(self.cursor.position_x + dx, self.cursor.position_y + dy):
                 self.cursor.UpdatePosition(self.cursor.position_x + dx, self.cursor.position_y + dy, self.camera.offset_X, self.camera.offset_Y)
             if self.cursor.selected_unit is not None and (self.cursor.position_x, self.cursor.position_y) in self.movement_display.allowed_tiles:
                 self._get_path()
+
         elif self.cursor.state == CursorState.CHARMENU:
-            self.menu_cursor.ScrollMenu(self.menu_cursor.GetCommands(), self.menu_cursor.index + dy)
+            self.menu_cursor.ScrollCharMenu(self.menu_cursor.GetCommands(), self.menu_cursor.index + dy)
+
         elif self.cursor.state == CursorState.ATTACK:
             unit = self.target_selector.ScrollSelection(dx + dy)
             self.cursor.UpdatePosition(self.target_selector.GetSelection()[0], self.target_selector.GetSelection()[1], self.camera.offset_X, self.camera.offset_Y)
+        
+        elif self.cursor.state == CursorState.ITEM:
+            self.menu_cursor.ScrollItemMenu(self.cursor.selected_unit.items, self.menu_cursor.index + dy)
             
 
     def _handle_confirm(self, unit):
@@ -189,6 +197,18 @@ class GameLoop():
                         self.target_selector.UpdateTiles(ranges, self.units)
                         self.cursor.UpdatePosition(self.target_selector.GetSelection()[0], self.target_selector.GetSelection()[1], self.camera.offset_X, self.camera.offset_Y)
                         self.sprite_renderer.show_indicators = False
+                    
+                    elif self.menu_cursor.index == CharMenuCommands.ITEM.value:
+                        self.cursor.state = CursorState.ITEM
+                        self.menu_cursor.SetItemState()
+                
+                elif self.cursor.state == CursorState.ITEM:
+                    if len(self.cursor.selected_unit.items) > 0:
+                        selected_item = self.cursor.selected_unit.items[self.menu_cursor.index]
+                        keep_item = selected_item.useItem(self.cursor.selected_unit)
+                        if not keep_item:
+                            self.cursor.selected_unit.items.remove(selected_item)
+                        self._deactivate_selected_unit()
 
                 else:
                     self.cursor.state = CursorState.CHARMENU
@@ -207,7 +227,7 @@ class GameLoop():
                 self._select_unit(unit)
     
     def _handle_cancel(self):
-        self.menu_cursor.ResetCursor()
+        self.menu_cursor.SetCharState()
         self.indicators.empty()
         if self.cursor.state == CursorState.MOVE:
             self.movement_display.ClearMovementRange()
@@ -225,6 +245,10 @@ class GameLoop():
             self.movement_display.ClearCurrentAttackRanges()
             self.cursor.UpdatePosition(self.cursor.selected_unit.position_x, self.cursor.selected_unit.position_y, self.camera.offset_X, self.camera.offset_Y)
             self.target_selector.ClearTiles()
+        elif self.cursor.state == CursorState.ITEM:
+            self.cursor.state = CursorState.CHARMENU
+            self.menu_cursor.SetCharState()
+            self.cursor.UpdatePosition(self.cursor.selected_unit.position_x, self.cursor.selected_unit.position_y, self.camera.offset_X, self.camera.offset_Y)
     
 
 
@@ -240,28 +264,37 @@ class GameLoop():
             #If there is a unit on the curently selected tile or a unit is currently selected, display its info
             #To do: refactor
             if unit is not None or self.cursor.selected_unit is not None:
-                unit_display = pygame.Surface((100,50))
-                unit_display.fill((24, 48, 184))
+                unit_display = pygame.Surface((164,64))
+                if (unit is not None and unit.alignment == Alignment.ENEMY):
+                    unit_display.fill((154, 18, 4))
+                else:
+                    unit_display.fill((24, 48, 184))
 
-                if self.cursor.selected_unit is not None:
+                if self.cursor.selected_unit is not None and self.cursor.state is not CursorState.ATTACK:
                     unit_name = self.font.render(str(self.cursor.selected_unit.name), False, (255,255,255))
                     unit_hp = self.font.render("HP: " + str(self.cursor.selected_unit.current_hp) + "/" + str(self.cursor.selected_unit.max_hp), False, (222,222,222))
+                    unit_attack = self.font2.render("STR: " + str(self.cursor.selected_unit.strength), False, (222,222,222))
+                    unit_defense = self.font2.render("DEF: " + str(self.cursor.selected_unit.defense), False, (222,222,222))
+                    unit_speed = self.font2.render("SPD: " + str(self.cursor.selected_unit.speed), False, (222,222,222))
                 
                 else:
                     unit_name = self.font.render(str(unit.name), False, (222,222,222))
                     unit_hp = self.font.render("HP: " + str(unit.current_hp) + "/" + str(unit.max_hp), False, (222,222,222))
-                unit_display.blit(unit_name, (10,4))
-                unit_display.blit(unit_hp,(10,24))
+                    unit_attack = self.font2.render("STR: " + str(unit.strength), False, (222,222,222))
+                    unit_defense = self.font2.render("DEF: " + str(unit.defense), False, (222,222,222))
+                    unit_speed = self.font2.render("SPD: " + str(unit.speed), False, (222,222,222))
+
+                unit_display.blit(unit_name, (10, 4))
+                unit_display.blit(unit_hp,(10, 24))
+                unit_display.blit(unit_attack, (10, 44))
+                unit_display.blit(unit_defense, (60, 44))
+                unit_display.blit(unit_speed, (110, 44))
                 self.screen.blit(unit_display, (10,5))
             
             #If in character menu, draw menu
             #Refactor
             if self.cursor.state == CursorState.CHARMENU:
                 available_commands = self.menu_cursor.GetCommands()
-
-                #Additional menu commands for testing purposes
-                #available_commands.append("Attack")
-                #available_commands.append("Item")
 
                 character_menu_height = 16 + 20 * len(available_commands)
                 character_menu = pygame.Surface((70,character_menu_height))
@@ -275,10 +308,26 @@ class GameLoop():
                     i += 1
 
                 character_menu.blit(self.menu_cursor.surf, self.menu_cursor.rect)
-                self.screen.blit(character_menu, (10,80))
+                self.screen.blit(character_menu, (10,100))
+            
+            elif self.cursor.state == CursorState.ITEM:
+                items = self.cursor.selected_unit.items
+
+                item_menu = pygame.Surface((100,100))
+                item_menu.fill((24, 48, 184))
+
+                i = 0
+                for item in items:
+                    item_menu.blit(item.image, (4, 6 + (i * 20)))
+                    name_to_draw = self.font.render(itemNames[item.type.value] + "  " + str(item.remaining_uses), False, (222,222,222))
+                    item_menu.blit(name_to_draw, (24, 2 + (i * 20)))
+                    item_menu.blit(self.menu_cursor.surf, self.menu_cursor.rect)
+                    self.screen.blit(item_menu, (10,80))
+                    i += 1
+                    
                 
             #Display cursor debug information
-            #Add env variable to toggle this
+            #TO DO: Add env variable to toggle this
             cursor_pos = self.font.render("x: " + str(self.cursor.position_x) + " y: " + str(self.cursor.position_y), False, (222,222,222))
             cursor_state = self.font.render(self.cursor.state.name, False, (222,222,222))
 

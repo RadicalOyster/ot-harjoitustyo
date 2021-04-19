@@ -11,6 +11,7 @@ from game_clock import GameClock
 from pathfinding import PathFinding
 from target_selector import TargetSelector
 from camera import Camera
+from item import Item
 
 #Initializing the game
 
@@ -24,6 +25,9 @@ def main():
 
     units = []
     units.append(Unit(1,2,name="Ferdinand", strength=8, speed=6, defense=5, offset_X=camera.offset_X, offset_Y=camera.offset_Y))
+    units[0].items.append(Item(3, 3, 0))
+    units[0].items.append(Item(3, 3, 0))
+    units[0].items.append(Item(3, 3, 0))
     units.append(Unit(3,3,Alignment.ENEMY, offset_X=camera.offset_X, offset_Y=camera.offset_Y))
     units.append(Unit(2,2,Alignment.ENEMY, offset_X=camera.offset_X, offset_Y=camera.offset_Y))
     units.append(Unit(12,4,Alignment.ENEMY, offset_X=camera.offset_X, offset_Y=camera.offset_Y))
@@ -31,6 +35,7 @@ def main():
 
     pygame.font.init()
     font = pygame.font.SysFont("Arial", 20)
+    font2 = pygame.font.SysFont("Arial", 14)
 
     clock = GameClock()
 
@@ -53,7 +58,7 @@ def main():
     target_selector = TargetSelector()
 
     game_loop = GameLoop(screen, SpriteRenderer(), Cursor(1, 1, camera.offset_X, camera.offset_Y), MenuCursor(),
-    EventQueue(), units, MovementDisplay(pathfinding), font, clock, target_selector, camera, level)
+    EventQueue(), units, MovementDisplay(pathfinding), font, font2, clock, target_selector, camera, level)
 
     pygame.init()
     game_loop.start()
