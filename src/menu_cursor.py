@@ -52,7 +52,7 @@ class MenuCursor(pygame.sprite.Sprite):
         self.surf.set_alpha(98)
         self.index = 0
         self.rect.left = 8
-        self.rect.top = 5
+        self.rect.top = 10
     
     def SetItemState(self):
         self.state = CursorState.ITEM
