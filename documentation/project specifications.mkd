@@ -47,12 +47,12 @@ After combat, both units' health will be updated and dead units removed from the
 * Pathfinding and display for units' movement- and attack ranges (utilizes Dijkstra's algorithm)
 * Terrain with varying movement costs
 * Scrolling camera
+* UI elements to allow the player to inspect a unit's attributes in detail
+* Basic unit inventory system
 
 
 ### Not yet implemented
 * Basic AI to control enemy actions
-* UI elements to allow the player to inspect a unit's attributes in detail
-* Basic unit inventory system
 
 ## Features for future development
 
