@@ -13,14 +13,13 @@ class Item(pygame.sprite.Sprite):
 
         self.max_uses = max_uses
         self.remaining_uses = remaining_uses
-        self.type = ItemType.POTION
+        self.type = item_type
 
         self.image = load_image("potion.png")
         
-    def useItem(self, user):
-        if (self.type == ItemType.POTION):
-            user.updateHP(-10)
+    def use_item(self, user):
+        if self.type == ItemType.POTION:
+            user.update_hp(-10)
             self.remaining_uses -= 1
             if (self.remaining_uses <= 0):
-                return False
-            return True
+                user.items.remove(self)

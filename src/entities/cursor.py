@@ -23,21 +23,18 @@ class Cursor(pygame.sprite.Sprite):
         self.selected_unit = None
         self.state = CursorState.MAP
     
-    def UpdatePosition(self, x, y, offset_x=0, offset_y=0):
+    def update_position(self, x, y, offset_x=0, offset_y=0):
         self.position_x = x
         self.position_y = y
 
         self.rect.left = x * 64 - offset_x * 64
         self.rect.top = y * 64 - offset_y * 64
     
-    def UpdateMenuPosition(self, index):
-        self.selected_item = index
-    
-    def UpdateUnitSelection(unit):
+    def select_unit(self, unit):
         self.selected_unit = unit
     
-    def UnselectUnit(self):
+    def unselect_unit(self):
         self.selected_unit = None
     
-    def UpdateState(state):
+    def update_state(self, state):
         self.state = state

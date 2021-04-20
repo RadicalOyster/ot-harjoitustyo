@@ -20,13 +20,13 @@ class MoveTile(pygame.sprite.Sprite):
         self.rect.y = y * 64 - offset_Y * 64
         self.image.set_alpha(168)
 
-    def updateAnimation(self):
+    def update_animation(self):
         self.active_sprite += 0.1
         if (self.active_sprite > len(self.sprites)):
             self.active_sprite = 0
         self.image = self.sprites[int(self.active_sprite)]
         self.image.set_alpha(168)
     
-    def updateOffset(self, offset_x, offset_y):
+    def update_offset(self, offset_x, offset_y):
         self.rect.x = self.position_x * 64 - offset_x * 64
         self.rect.y = self.position_y * 64 - offset_y * 64

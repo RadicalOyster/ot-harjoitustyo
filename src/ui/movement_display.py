@@ -17,16 +17,16 @@ class MovementDisplay(pygame.sprite.Sprite):
     
     def UpdateMovementTiles(self, x, y, unit, offset_X=0, offset_Y=0):
         self.movement_display.empty()
-        self.pathfinding.CalculateDistances(x, y)
-        allowed_tiles = self.pathfinding.ReturnRanges(unit.movement)
+        self.pathfinding.calculate_distances(x, y)
+        allowed_tiles = self.pathfinding.return_ranges(unit.movement)
         self.allowed_tiles = allowed_tiles
         for tile in allowed_tiles:
             self.movement_display.add(MoveTile(tile[0], tile[1], offset_X, offset_Y))
 
     def UpdateAttackTiles(self, x, y, unit, offset_X=0, offset_Y=0):
         self.attack_display.empty()
-        self.pathfinding.CalculateDistances(x, y)
-        reachable_tiles = self.pathfinding.ReturnRanges(unit.movement + unit.range)
+        self.pathfinding.calculate_distances(x, y)
+        reachable_tiles = self.pathfinding.return_ranges(unit.movement + unit.range)
         attack_tiles = []
         for tile in reachable_tiles:
             if tile not in self.allowed_tiles:
@@ -36,8 +36,8 @@ class MovementDisplay(pygame.sprite.Sprite):
             self.attack_display.add(AttackTile(tile[0], tile[1], offset_X, offset_Y))
     
     def GetCurrentAttackRanges(self, x, y, range, offset_x, offset_y):
-        self.pathfinding.CalculateDistances(x, y)
-        tiles_in_range = self.pathfinding.ReturnRanges(range)
+        self.pathfinding.calculate_distances(x, y)
+        tiles_in_range = self.pathfinding.return_ranges(range)
         for tile in tiles_in_range:
             if (tile[0] == x and tile[1] == y):
                 continue

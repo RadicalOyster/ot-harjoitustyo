@@ -51,25 +51,23 @@ class Unit(pygame.sprite.Sprite):
         self.rect.x = x * 64 - offset_X * 64
         self.rect.y = y * 64 - offset_Y * 64
 
-    def updatePosition(self, x, y, offset_X=0, offset_Y=0):
-        self.old_position_x = self.position_x
-        self.old_position_y = self.position_y
+    def update_position(self, x, y, offset_X=0, offset_Y=0):
+        self._remember_position(self.position_x, self.position_y)
         self.position_x = x
         self.position_y = y
         self.rect.x = x * 64 - offset_X * 64
         self.rect.y = y * 64 - offset_Y * 64
     
-    def revertPosition(self, offset_x, offset_y):
+    def revert_position(self, offset_x, offset_y):
         self.position_x = self.old_position_x
         self.position_y = self.old_position_y
-        self.rect.x = self.old_position_x * 64 - offset_x * 64 
-        self.rect.y = self.old_position_y * 64 - offset_y * 64
+        self.update_offset(offset_x, offset_y)
     
-    def rememberPosition(self, x, y):
+    def _remember_position(self, x, y):
         self.old_position_x = x
         self.old_position_y = y
     
-    def updateAnimation(self):
+    def update_animation(self):
         #active frame is still updated even when unit has not moved to keep animations in sync
         self.active_sprite += 0.1
         if (self.active_sprite > len(self.sprites)):
@@ -77,7 +75,7 @@ class Unit(pygame.sprite.Sprite):
         if not self.has_moved:            
             self.image = pygame.transform.scale(self.sprites[int(self.active_sprite)], (64,64))
     
-    def updateOffset(self, offset_x, offset_y):
+    def update_offset(self, offset_x, offset_y):
         self.rect.x = self.position_x * 64 - offset_x * 64
         self.rect.y = self.position_y * 64 - offset_y * 64
 
@@ -89,7 +87,7 @@ class Unit(pygame.sprite.Sprite):
         self.has_moved = False
         self.image = pygame.transform.scale(self.sprites[int(self.active_sprite)], (64,64))
     
-    def updateHP(self, damage):
+    def update_hp(self, damage):
         self.current_hp -= damage
         if (self.current_hp <= 0):
             self.dead = True

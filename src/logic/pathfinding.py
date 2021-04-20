@@ -20,7 +20,7 @@ class PathFinding():
         self.queue[cursorY, cursorX] = 0
         self.path_found = False
         
-    def _isValid(self, x, y):
+    def _is_valid(self, x, y):
         return x >= 0 and x < len(self.level[0]) and y >= 0 and y < len(self.level)
     
     #Visit each of the node's neighbors
@@ -36,7 +36,7 @@ class PathFinding():
                 new_column += 1
             elif i == 3:
                 new_column -= 1
-            if not self._isValid(new_column, new_row):
+            if not self._is_valid(new_column, new_row):
                 continue
             if self.visited[new_row][new_column]:
                 continue
@@ -54,7 +54,7 @@ class PathFinding():
             self.distance[new_row][new_column] = node_distance
             self.visited[new_row][new_column] = True
     
-    def PrintRange(self, reach):
+    def print_range(self, reach):
         for line in self.distance:
             for value in line:
                 if (value > reach):
@@ -63,14 +63,14 @@ class PathFinding():
                     print("*",end=" ")
             print("")
     
-    def PrintDistances(self):
+    def print_distances(self):
         for line in self.distance:
             for value in line:
                 print(value,end=" ")
             print("")
     
     #Returns a list of reachable nodes
-    def ReturnRanges(self, reach):
+    def return_ranges(self, reach):
         reachableSpaces = []
         for i in range(0, len(self.level)):
             for j in range(0, len(self.level[0])):
@@ -82,7 +82,7 @@ class PathFinding():
     
     #Returns shortest path to point
     #Incomplete
-    def _constructPath(self, start, destination):
+    def _construct_path(self, start, destination):
         path = []
         current_node = destination
         path.append(destination)
@@ -91,16 +91,16 @@ class PathFinding():
             path.append(current_node)
         return path
 
-    def ReturnPath(self, start, destination):
+    def return_path(self, start, destination):
         self.__init__(start[0], start[1], self.level)
         while not self.path_found and len(self.queue) > 0:
             head = self.queue.popitem()
             row, column = head[0]
             self.traverse(row, column, destination)
-        return self._constructPath(start, destination)
+        return self._construct_path(start, destination)
     
     #Run the algorithm to determine the distance between each point on the level and the cursor position
-    def CalculateDistances(self, x, y):
+    def calculate_distances(self, x, y):
         self.__init__(x, y, self.level)
         while not self.path_found and len(self.queue) > 0:
             head = self.queue.popitem()

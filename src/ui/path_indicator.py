@@ -12,6 +12,6 @@ class PathIndicator(pygame.sprite.Sprite):
         self.rect.x = x * 64 - offset_X * 64
         self.rect.y = y * 64 - offset_Y * 64
 
-    def updateOffset(self, offset_x, offset_y):
+    def update_offset(self, offset_x, offset_y):
         self.rect.x = self.position_x * 64 - offset_x * 64
         self.rect.y = self.position_y * 64 - offset_y * 64
