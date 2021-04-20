@@ -1,12 +1,12 @@
 import pygame
-from game_clock import GameClock
+from entities.game_clock import GameClock
 from utility_functions import UnitOnTile
-from cursor import CursorState
-from menu_cursor import CharMenuCommands
-from unit import Alignment
-from path_indicator import PathIndicator
-from combat import Combat
-from item import itemNames
+from entities.cursor import CursorState
+from entities.menu_cursor import CharMenuCommands
+from entities.unit import Alignment
+from ui.path_indicator import PathIndicator
+from logic.combat import Combat
+from entities.item import itemNames
 
 from pygame.locals import (
     K_UP,
@@ -277,19 +277,23 @@ class GameLoop():
                     unit_defense = self.font2.render("DEF: " + str(self.cursor.selected_unit.defense), False, (222,222,222))
                     unit_speed = self.font2.render("SPD: " + str(self.cursor.selected_unit.speed), False, (222,222,222))
                 
-                else:
+                elif unit is not None:
                     unit_name = self.font.render(str(unit.name), False, (222,222,222))
                     unit_hp = self.font.render("HP: " + str(unit.current_hp) + "/" + str(unit.max_hp), False, (222,222,222))
                     unit_attack = self.font2.render("STR: " + str(unit.strength), False, (222,222,222))
                     unit_defense = self.font2.render("DEF: " + str(unit.defense), False, (222,222,222))
                     unit_speed = self.font2.render("SPD: " + str(unit.speed), False, (222,222,222))
 
-                unit_display.blit(unit_name, (10, 4))
-                unit_display.blit(unit_hp,(10, 24))
-                unit_display.blit(unit_attack, (10, 44))
-                unit_display.blit(unit_defense, (60, 44))
-                unit_display.blit(unit_speed, (110, 44))
-                self.screen.blit(unit_display, (10,5))
+                try:
+                    unit_display.blit(unit_name, (10, 4))
+                    unit_display.blit(unit_hp,(10, 24))
+                    unit_display.blit(unit_attack, (10, 44))
+                    unit_display.blit(unit_defense, (60, 44))
+                    unit_display.blit(unit_speed, (110, 44))
+                    self.screen.blit(unit_display, (10,5))
+                except:
+                    pass
+                
             
             #If in character menu, draw menu
             #Refactor

@@ -1,5 +1,7 @@
 import unittest
-from unit import Unit, Alignment 
+import os, sys, inspect
+sys.path.append(os.path.join(os.path.dirname(sys.path[0]),'entities'))
+from entities.unit import Unit, Alignment
 
 class TestUnit(unittest.TestCase):
     def setUp(self):

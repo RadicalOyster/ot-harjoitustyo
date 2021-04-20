@@ -1,5 +1,5 @@
 from utility_functions import UnitOnTile
-from unit import Alignment
+from .unit import Alignment
 
 #Handles selecting target unit for actions
 class TargetSelector():

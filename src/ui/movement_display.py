@@ -1,6 +1,6 @@
 import pygame
-from attack_tile import AttackTile
-from move_tile import MoveTile
+from .attack_tile import AttackTile
+from .move_tile import MoveTile
 from utility_functions import load_image
 
 class MovementDisplay(pygame.sprite.Sprite):

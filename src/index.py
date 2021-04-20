@@ -1,17 +1,21 @@
 import pygame
-from cursor import Cursor, CursorState
-from movement_display import MovementDisplay
-from sprite_renderer import SpriteRenderer
-from menu_cursor import MenuCursor, CharMenuCommands
-from unit import Unit, Alignment
-import os
+import os, sys, inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0,parentdir)
+
+from entities.cursor import Cursor, CursorState
+from ui.movement_display import MovementDisplay
+from ui.sprite_renderer import SpriteRenderer
+from entities.menu_cursor import MenuCursor, CharMenuCommands
+from entities.unit import Unit, Alignment
 from game_loop import GameLoop
-from event_queue import EventQueue
-from game_clock import GameClock
-from pathfinding import PathFinding
-from target_selector import TargetSelector
-from camera import Camera
-from item import Item
+from entities.event_queue import EventQueue
+from entities.game_clock import GameClock
+from logic.pathfinding import PathFinding
+from entities.target_selector import TargetSelector
+from entities.camera import Camera
+from entities.item import Item
 
 #Initializing the game
 
