@@ -18,4 +18,7 @@
 | 5.4   | 2    | implemented a scrolling camera
 | 5.4   | 2    | fixed a major bug in pathfinding
 | 5.4   | 4    | fixed bugs arising from camera implementation
-| total | 47   | | 
+| 14.4  | 2    | added invoke commands, minor fixes
+| 19.4  | 3    | implemented unit inventory and usable items, updated documentation
+| 20.4  | 3    | added tests, invoke command for test coverage and pylint rules and began to clean up code
+| total | 55   | | 
