@@ -372,7 +372,7 @@ class GameLoop():
             for item in items:
                 item_menu.blit(item.image, (4, 6 + (i * 20)))
                 name_to_draw = self.font.render(
-                    itemNames[item.type.value] + "  " + str(item.remaining_uses), False, (222, 222, 222))
+                    itemNames[item.type] + "  " + str(item.remaining_uses), False, (222, 222, 222))
                 item_menu.blit(name_to_draw, (24, 2 + (i * 20)))
                 item_menu.blit(self.menu_cursor.surf, self.menu_cursor.rect)
                 self.screen.blit(item_menu, (10, 80))
