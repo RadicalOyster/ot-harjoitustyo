@@ -1,6 +1,7 @@
 import pygame
 from utility_functions import load_image
 
+
 class MoveTile(pygame.sprite.Sprite):
     def __init__(self, x=0, y=0, offset_X=0, offset_Y=0):
         super().__init__()
@@ -26,7 +27,7 @@ class MoveTile(pygame.sprite.Sprite):
             self.active_sprite = 0
         self.image = self.sprites[int(self.active_sprite)]
         self.image.set_alpha(168)
-    
+
     def update_offset(self, offset_x, offset_y):
         self.rect.x = self.position_x * 64 - offset_x * 64
         self.rect.y = self.position_y * 64 - offset_y * 64

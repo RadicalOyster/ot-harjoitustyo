@@ -4,8 +4,10 @@ from enum import Enum
 
 itemNames = ["Potion"]
 
+
 class ItemType(Enum):
     POTION = 0
+
 
 class Item(pygame.sprite.Sprite):
     def __init__(self, max_uses, remaining_uses, item_type=ItemType.POTION):
@@ -16,7 +18,7 @@ class Item(pygame.sprite.Sprite):
         self.type = item_type
 
         self.image = load_image("potion.png")
-        
+
     def use_item(self, user):
         if self.type == ItemType.POTION:
             user.update_hp(-10)

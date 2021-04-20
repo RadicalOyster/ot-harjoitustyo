@@ -1,15 +1,18 @@
-import unittest
-import os, sys, inspect
-sys.path.append(os.path.join(os.path.dirname(sys.path[0]),'entities'))
-from logic.combat import ReturnAttackOrder, Combat
 from entities.unit import Unit
+from logic.combat import ReturnAttackOrder, Combat
+import unittest
+import os
+import sys
+import inspect
+sys.path.append(os.path.join(os.path.dirname(sys.path[0]), 'entities'))
+
 
 class Combat(unittest.TestCase):
     def setUp(self):
         self.unit = Unit(1, 2, name="Testboy")
         self.unit2 = Unit(1, 2, name="Testman")
         self.unit3 = Unit(1, 5, hp=20, strength=1, speed=18, defense=6)
-    
+
     def test_fast_unit_attacks_twice(self):
         attack_order = ReturnAttackOrder(self.unit3, self.unit)
 
@@ -23,7 +26,7 @@ class Combat(unittest.TestCase):
 
         self.assertEqual(attack_order[2][0], self.unit3)
         self.assertEqual(attack_order[2][1], self.unit)
-    
+
     def test_equally_fast_units_attack_once_each(self):
         attack_order = ReturnAttackOrder(self.unit, self.unit2)
 

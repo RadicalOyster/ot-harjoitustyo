@@ -1,10 +1,12 @@
 import pygame
 from utility_functions import load_image
 
+
 class PathIndicator(pygame.sprite.Sprite):
     def __init__(self, x, y, offset_X=0, offset_Y=0):
         super().__init__()
-        self.image = pygame.transform.scale(load_image("path_indicator.png"), (64,64))
+        self.image = pygame.transform.scale(
+            load_image("path_indicator.png"), (64, 64))
         self.position_x = x
         self.position_y = y
 
