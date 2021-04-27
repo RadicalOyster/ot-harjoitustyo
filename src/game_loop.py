@@ -202,7 +202,6 @@ class GameLoop():
                 self.menu_cursor.GetCommands(), self.menu_cursor.index + dy)
 
         elif self.cursor.state == CursorState.ATTACK:
-            unit = self.target_selector.ScrollSelection(dx + dy)
             self.cursor.update_position(self.target_selector.GetSelection()[0],
             self.target_selector.GetSelection()[1], self.camera.offset_X, self.camera.offset_Y)
 

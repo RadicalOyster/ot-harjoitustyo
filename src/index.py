@@ -74,12 +74,6 @@ def main():
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1]
     ]
 
-    test_map = [
-        [0, 1, 0],
-        [0, 1, 0],
-        [0, 0, 0]
-    ]
-
     test_level = Level(level, units)
     tile_map = TileMap(level)
 

@@ -1,10 +1,6 @@
 import unittest
-import os
-import sys
-import inspect
 from entities.unit import Unit
 from entities.item import Item, ItemType
-sys.path.append(os.path.join(os.path.dirname(sys.path[0]), 'entities'))
 
 
 class TestItem(unittest.TestCase):

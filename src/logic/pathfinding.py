@@ -59,31 +59,34 @@ class PathFinding():
             self.distance[new_row][new_column] = node_distance
             self.visited[new_row][new_column] = True
 
-    def print_range(self, reach):
-        for line in self.distance:
-            for value in line:
-                if (value > reach):
-                    print("X", end=" ")
-                else:
-                    print("*", end=" ")
-            print("")
+    #def print_range(self, reach):
+        #for line in self.distance:
+            #for value in line:
+                #if (value > reach):
+                    #print("X", end=" ")
+                #else:
+                    #print("*", end=" ")
+            #print("")
 
-    def print_distances(self):
-        for line in self.distance:
-            for value in line:
-                print(value, end=" ")
-            print("")
+    #def print_distances(self):
+        #for line in self.distance:
+            #for value in line:
+                #print(value, end=" ")
+            #print("")
+    
+    def return_distances(self):
+        return self.distance
 
     # Returns a list of reachable nodes
     def return_ranges(self, reach):
-        reachableSpaces = []
+        reachable_spaces = []
         for i in range(0, len(self.level)):
             for j in range(0, len(self.level[0])):
                 if (self.distance[i][j] > reach):
                     pass
                 else:
-                    reachableSpaces.append((j, i))
-        return reachableSpaces
+                    reachable_spaces.append((j, i))
+        return reachable_spaces
 
     # Returns shortest path to point
     # Incomplete
@@ -104,9 +107,10 @@ class PathFinding():
             self.traverse(row, column, destination)
         return self._construct_path(start, destination)
 
-    # Run the algorithm to determine the distance between each point on the level and the cursor position
-    def calculate_distances(self, x, y):
-        self.__init__(x, y, self.level)
+    # Run the algorithm to determine the distance from the given point to
+    # every other point on the map
+    def calculate_distances(self, position_x, position_y):
+        self.__init__(position_x, position_y, self.level)
         while not self.path_found and len(self.queue) > 0:
             head = self.queue.popitem()
             row, column = head[0]
