@@ -20,7 +20,7 @@ class Item(pygame.sprite.Sprite):
         self.image = load_image("potion.png")
 
     def use_item(self, user):
-        if self.type == ItemType.POTION:
+        if self.type == ItemType.POTION.value:
             user.update_hp(-10)
             self.remaining_uses -= 1
             if (self.remaining_uses <= 0):
