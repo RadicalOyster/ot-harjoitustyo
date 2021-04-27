@@ -21,4 +21,6 @@
 | 14.4  | 2    | added invoke commands, minor fixes
 | 19.4  | 3    | implemented unit inventory and usable items, updated documentation
 | 20.4  | 3    | added tests, invoke command for test coverage and pylint rules and began to clean up code
-| total | 55   | | 
+| 27.4  | 2    | added functionality to support maps with varying tiles with their own movement cost and graphics
+| 27.4  | 2    | bug fixing, code cleanup and tests
+| total | 59   | | 

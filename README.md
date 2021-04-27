@@ -11,6 +11,8 @@ This project is a simple turn based strategy game inspired by [Fire Emblem](http
 
 [Timekeeping](https://github.com/RadicalOyster/ot-harjoitustyo/blob/master/documentation/time%20spent.mkd)
 
+[Project architecture](https://github.com/RadicalOyster/ot-harjoitustyo/blob/master/documentation/arkkitehtuuri.md)
+
 ## Compatibility
 
 This project has been developed using python 3.8.0. Running the project with an older version of Python may cause issues.
