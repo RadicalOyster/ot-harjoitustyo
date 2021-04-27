@@ -23,5 +23,5 @@ class Item(pygame.sprite.Sprite):
         if self.type == ItemType.POTION.value:
             user.update_hp(-10)
             self.remaining_uses -= 1
-            if (self.remaining_uses <= 0):
+            if self.remaining_uses <= 0:
                 user.items.remove(self)

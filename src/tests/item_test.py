@@ -1,15 +1,15 @@
-from entities.unit import Unit
-from entities.item import Item, ItemType
 import unittest
 import os
 import sys
 import inspect
+from entities.unit import Unit
+from entities.item import Item, ItemType
 sys.path.append(os.path.join(os.path.dirname(sys.path[0]), 'entities'))
 
 
 class TestItem(unittest.TestCase):
     def setUp(self):
-        self.item = Item(3, 2, ItemType.POTION)
+        self.item = Item(3, 2, ItemType.POTION.value)
         self.unit = Unit(1, 2)
         self.unit.items.append(self.item)
 
@@ -20,7 +20,7 @@ class TestItem(unittest.TestCase):
         self.assertEqual(self.item.remaining_uses, 2)
 
     def test_item_type_set_correctly(self):
-        self.assertEqual(self.item.type, ItemType.POTION)
+        self.assertEqual(self.item.type, ItemType.POTION.value)
 
     def test_use_item_deducts_remaining_uses(self):
         self.item.use_item(self.unit)
