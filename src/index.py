@@ -83,7 +83,7 @@ def main():
     pathfinding = PathFinding(1, 1, test_level.get_movement_data())
     target_selector = TargetSelector()
 
-    game_loop = GameLoop(screen, SpriteRenderer(), Cursor(1, 1, camera.offset_X, camera.offset_Y), MenuCursor(),
+    game_loop = GameLoop(screen, SpriteRenderer(), Cursor(1, 4, camera.offset_X, camera.offset_Y), MenuCursor(),
                          EventQueue(), units, MovementDisplay(pathfinding), font, font2, clock, target_selector, camera, level,
                          tile_map)
 
