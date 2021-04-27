@@ -45,7 +45,7 @@ Items have limited uses which are displayed next to the item's name in the item 
 
 <img src="https://github.com/RadicalOyster/ot-harjoitustyo/blob/master/images/interface_7.png">
 
-Map can span distances greater than what the game window can display. Moving your cursor towards the screen boundary will scroll the map to give you
+Maps can span distances greater than what the game window can display. Moving your cursor towards the screen boundary will scroll the map to give you
 a better view of the battlefield.
 
 <img src="https://github.com/RadicalOyster/ot-harjoitustyo/blob/master/images/interface_8.png">
