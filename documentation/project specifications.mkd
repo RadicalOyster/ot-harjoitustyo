@@ -50,6 +50,10 @@ a better view of the battlefield.
 
 <img src="https://github.com/RadicalOyster/ot-harjoitustyo/blob/master/images/interface_8.png">
 
+## Resetting your units
+
+For testing purposes until enemy AI has been implemented, the C key will reactivate all inactive units.
+
 ## Basic functionality
 
 * Cursor movement and unit selection
