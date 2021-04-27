@@ -24,7 +24,8 @@ from pygame.locals import (
 
 class GameLoop():
     def __init__(self, screen, sprite_renderer, cursor, menu_cursor,
-    event_queue, units,movement_display, font, font2, clock, target_selector, camera, level):
+    event_queue, units,movement_display, font, font2, clock, target_selector, camera, level,
+    tile_map):
         self.screen = screen
         self.sprite_renderer = sprite_renderer
         self.cursor = cursor
@@ -41,6 +42,7 @@ class GameLoop():
         self.level = level
         self.running = True
         self.disable_input = False
+        self.tile_map = tile_map
 
     def start(self):
         while self.running:
@@ -141,28 +143,30 @@ class GameLoop():
             tile.update_offset(self.camera.offset_X, self.camera.offset_Y)
         for indicator in self.indicators:
             indicator.update_offset(self.camera.offset_X, self.camera.offset_Y)
+        for tile in self.tile_map.get_tiles():
+            tile.update_offset(self.camera.offset_X, self.camera.offset_Y)
 
     # Moves the camera and cursor
 
     def _move_selection(self, dx, dy):
         if self.cursor.state == CursorState.MAP or self.cursor.state == CursorState.MOVE:
             if (dx == 1 and
-            self.cursor.position_x <= len(self.level[0]) - 1 and
+            self.cursor.position_x <= len(self.level[0]) - 4 and
             self.cursor.position_x - self.camera.offset_X >= 7):
                 self.camera.offset_X += 1
 
-            if (dx == -1 and
+            elif (dx == -1 and
             self.cursor.position_x - self.camera.offset_X > 0 and
             self.cursor.position_x - self.camera.offset_X < 3 and
             self.camera.offset_X > 0):
                 self.camera.offset_X -= 1
 
-            if (dy == 1 and
-            self.cursor.position_y <= len(self.level) - 1 and
+            elif (dy == 1 and
+            self.cursor.position_y <= len(self.level) - 4 and
             self.cursor.position_y - self.camera.offset_Y >= 7):
                 self.camera.offset_Y += 1
 
-            if (dy == -1 and
+            elif (dy == -1 and
             self.cursor.position_y > 0 and
             self.cursor.position_y - self.camera.offset_Y < 3 and
             self.camera.offset_Y > 0):
@@ -291,8 +295,9 @@ class GameLoop():
 
     def _render(self, unit):
         self.screen.fill((24, 184, 48))
-        self.sprite_renderer.update(self.cursor, self.units, self.indicators, self.movement_display.get_movement_range(
-        ), self.movement_display.get_attack_range(), self.movement_display.current_ranges)
+        self.sprite_renderer.update(self.units, self.indicators, self.movement_display.get_movement_range(
+        ), self.movement_display.get_attack_range(), self.movement_display.current_ranges, self.tile_map.get_tiles())
+        self.sprite_renderer.map_tiles.draw(self.screen)
         self.sprite_renderer.overlays.draw(self.screen)
         if self.sprite_renderer.show_indicators:
             self.sprite_renderer.indicators.draw(self.screen)
