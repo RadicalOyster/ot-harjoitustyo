@@ -52,6 +52,8 @@ def main():
                  offset_X=camera.offset_X, offset_Y=camera.offset_Y))
     units.append(Unit(9, 7, Alignment.ENEMY,
                  offset_X=camera.offset_X, offset_Y=camera.offset_Y))
+    units.append(Unit(2, 5, Alignment.ENEMY,
+                 offset_X=camera.offset_X, offset_Y=camera.offset_Y))
 
     pygame.font.init()
     font = pygame.font.SysFont("Arial", 20)

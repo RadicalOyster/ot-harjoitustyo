@@ -38,6 +38,18 @@ In combat, the units will take turns to attack each other with the initiating un
 
 After combat, both units' health will be updated and dead units removed from the map. The selected unit will also become inactive as it has taken its action for the turn.
 
+<img src="https://github.com/RadicalOyster/ot-harjoitustyo/blob/master/images/interface_6.png">
+
+The item menu lets you browse a unit's inventory and activate items such as potions that can restore a unit's hit points. This will also deactivate the unit.
+Items have limited uses which are displayed next to the item's name in the item menu.
+
+<img src="https://github.com/RadicalOyster/ot-harjoitustyo/blob/master/images/interface_7.png">
+
+Map can span distances greater than what the game window can display. Moving your cursor towards the screen boundary will scroll the map to give you
+a better view of the battlefield.
+
+<img src="https://github.com/RadicalOyster/ot-harjoitustyo/blob/master/images/interface_8.png">
+
 ## Basic functionality
 
 * Cursor movement and unit selection

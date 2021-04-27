@@ -1,6 +1,6 @@
 # Ohjelmistotekniikka, kevät 2021
 
-![](https://github.com/RadicalOyster/ot-harjoitustyo/blob/master/screenshot.png)
+![](https://github.com/RadicalOyster/ot-harjoitustyo/blob/master/images/interface_2.png)
 
 # Generic strategy game
 This project is a simple turn based strategy game inspired by [Fire Emblem](https://en.wikipedia.org/wiki/Fire_Emblem:_Shadow_Dragon_and_the_Blade_of_Light). See links below for documentation.
