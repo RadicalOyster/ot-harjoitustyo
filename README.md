@@ -15,7 +15,7 @@ This project is a simple turn based strategy game inspired by [Fire Emblem](http
 
 ## Releases
 * [Release 1](https://github.com/RadicalOyster/ot-harjoitustyo/releases/tag/viikko5)
-* [Release 2]()
+* [Release 2](https://github.com/RadicalOyster/ot-harjoitustyo/releases/tag/viikko6)
 
 ## Compatibility
 
