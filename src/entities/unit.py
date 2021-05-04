@@ -12,7 +12,7 @@ sprite_suffixes = ["", "_e"]
 
 
 class Unit(pygame.sprite.Sprite):
-    def __init__(self, x=0, y=0, alignment=Alignment.ALLY, hp=15, name="Fighter", strength=5, speed=2, defense=3, offset_X=0, offset_Y=0):
+    def __init__(self, pos_x=0, pos_y=0, alignment=Alignment.ALLY, hp=15, name="Fighter", strength=5, speed=2, defense=3, offset_X=0, offset_Y=0):
         super().__init__()
 
         self.unit_class = "fighter"
@@ -54,35 +54,35 @@ class Unit(pygame.sprite.Sprite):
 
         self.items = []
 
-        self.position_x = x
-        self.position_y = y
-        self.old_position_x = x
-        self.old_position_y = y
+        self.position_x = pos_x
+        self.position_y = pos_y
+        self.old_position_x = pos_x
+        self.old_position_y = pos_y
 
         self.rect = self.image.get_rect()
-        self.rect.x = x * 64 - offset_X * 64
-        self.rect.y = y * 64 - offset_Y * 64
+        self.rect.x = pos_x * 64 - offset_X * 64
+        self.rect.y = pos_y * 64 - offset_Y * 64
 
-    def update_position(self, x, y, offset_X=0, offset_Y=0):
+    def update_position(self, pos_x, pos_y, offset_X=0, offset_Y=0):
         self._remember_position(self.position_x, self.position_y)
-        self.position_x = x
-        self.position_y = y
-        self.rect.x = x * 64 - offset_X * 64
-        self.rect.y = y * 64 - offset_Y * 64
+        self.position_x = pos_x
+        self.position_y = pos_y
+        self.rect.x = pos_x * 64 - offset_X * 64
+        self.rect.y = pos_y * 64 - offset_Y * 64
 
     def revert_position(self, offset_x, offset_y):
         self.position_x = self.old_position_x
         self.position_y = self.old_position_y
         self.update_offset(offset_x, offset_y)
 
-    def _remember_position(self, x, y):
-        self.old_position_x = x
-        self.old_position_y = y
+    def _remember_position(self, pos_x, pos_y):
+        self.old_position_x = pos_x
+        self.old_position_y = pos_y
 
     def update_animation(self):
         # active frame is still updated even when unit has not moved to keep animations in sync
         self.active_sprite += 0.1
-        if (self.active_sprite > len(self.sprites)):
+        if self.active_sprite > len(self.sprites):
             self.active_sprite = 0
         if not self.has_moved:
             self.image = pygame.transform.scale(

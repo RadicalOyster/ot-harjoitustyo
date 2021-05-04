@@ -1,4 +1,10 @@
 def ReturnAttackOrder(attacker, defender):
+    """Returns the order in which two units attack in combat
+
+    Args:
+        attacker: The unit initiating combat.
+        defender: The unit defending in combat.
+    """
     attack_order = []
 
     attack_order.append((attacker, defender))
@@ -13,6 +19,12 @@ def ReturnAttackOrder(attacker, defender):
 
 
 def Combat(attacker, defender):
+    """A method for resolving combat between two units.
+
+    Args:
+        attacker: The unit initiating combat.
+        defender: The unit defending in combat.
+    """
     attack_order = ReturnAttackOrder(attacker, defender)
     for combatants in attack_order:
         current_attacker = combatants[0]

@@ -80,7 +80,7 @@ def main():
     tile_map = TileMap(level)
 
 
-    pathfinding = PathFinding(1, 1, test_level.get_movement_data())
+    pathfinding = PathFinding(1, 1, test_level.movement_data)
     target_selector = TargetSelector()
 
     game_loop = GameLoop(screen, SpriteRenderer(), Cursor(1, 4, camera.offset_X, camera.offset_Y), MenuCursor(),

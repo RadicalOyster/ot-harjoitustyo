@@ -119,8 +119,8 @@ class GameLoop():
                 self.indicators.add(PathIndicator(
                     indicator[0], indicator[1], self.camera.offset_X, self.camera.offset_Y))
 
-    def _valid_tile(self, x, y):
-        if x < 0 or y < 0 or y > (len(self.level) - 1) or x > (len(self.level[0]) - 1):
+    def _valid_tile(self, col, row):
+        if col < 0 or row < 0 or row > (len(self.level) - 1) or col > (len(self.level[0]) - 1):
             return False
         return True
 
@@ -216,7 +216,8 @@ class GameLoop():
         if self.cursor.selected_unit is not None:
 
             if unit is None:
-                if (self.cursor.position_x, self.cursor.position_y) in self.movement_display.get_allowed_tiles():
+                if (self.cursor.position_x, self.cursor.position_y in
+                self.movement_display.get_allowed_tiles()):
 
                     self.cursor.selected_unit.update_position(
                     self.cursor.position_x, self.cursor.position_y,
@@ -333,7 +334,8 @@ class GameLoop():
             else:
                 unit_display.fill((24, 48, 184))
 
-            if self.cursor.selected_unit is not None and self.cursor.state is not CursorState.ATTACK:
+            if (self.cursor.selected_unit is not None and
+            self.cursor.state is not CursorState.ATTACK):
                 show_unit_display = True
                 unit_name = self.font.render(
                     str(self.cursor.selected_unit.name), False, (255, 255, 255))
@@ -363,7 +365,7 @@ class GameLoop():
                     "DEF: " + str(unit.defense), False, (222, 222, 222))
                 unit_speed = self.font2.render(
                     "SPD: " + str(unit.speed), False, (222, 222, 222))
-            
+
             if show_unit_display:
                 unit_display.blit(unit_name, (10, 4))
                 unit_display.blit(unit_hp, (10, 24))
