@@ -7,7 +7,7 @@ def ReturnAttackOrder(attacker, defender):
     if (attacker.speed >= defender.speed + 4):
         attack_order.append((attacker, defender))
     elif (defender.speed >= attacker.speed + 4):
-        attacker.append((defender, attacker))
+        attack_order.append((defender, attacker))
 
     return attack_order
 
