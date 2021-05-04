@@ -242,7 +242,7 @@ class GameLoop():
                             self.cursor.selected_unit.range,
                             self.camera.offset_X, self.camera.offset_Y)
 
-                        self.target_selector.UpdateTiles(ranges, self.units)
+                        self.target_selector.update_tiles(ranges, self.units)
                         self.cursor.update_position(self.target_selector.GetSelection()[0],
                         self.target_selector.GetSelection()[1],
                         self.camera.offset_X, self.camera.offset_Y)

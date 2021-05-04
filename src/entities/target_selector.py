@@ -10,7 +10,7 @@ class TargetSelector():
         self.tiles_with_units = []
         self.selection = 0
 
-    def UpdateTiles(self, tiles, units):
+    def update_tiles(self, tiles, units):
         self.tiles = tiles
 
         for tile in tiles:
