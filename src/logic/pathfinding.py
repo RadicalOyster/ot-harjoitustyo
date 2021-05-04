@@ -25,7 +25,7 @@ class PathFinding():
         self.queue[cursorY, cursorX] = 0
         self.path_found = False
 
-    def _is_valid(self, x, y):
+    def is_valid(self, x, y):
         return x >= 0 and x < len(self.level[0]) and y >= 0 and y < len(self.level)
 
     # Visit each of the node's neighbors
@@ -41,7 +41,7 @@ class PathFinding():
                 new_column += 1
             elif i == 3:
                 new_column -= 1
-            if not self._is_valid(new_column, new_row):
+            if not self.is_valid(new_column, new_row):
                 continue
             if self.visited[new_row][new_column]:
                 continue
