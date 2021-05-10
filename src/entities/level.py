@@ -45,5 +45,12 @@ class Level():
             for unit in self.units:
                 if unit.alignment == Alignment.ENEMY:
                     movement_data_with_units[unit.position_y][unit.position_x] = sys.maxsize
+        else:
+            for unit in self.units:
+                if unit.alignment == Alignment.ALLY:
+                    movement_data_with_units[unit.position_y][unit.position_x] = sys.maxsize   
         return movement_data_with_units
-        
+
+    def update_unit_position(self, unit, pos_x, pos_y):
+        self.unit_positions[unit.position_y][unit.position_x] = None
+        self.unit_positions[pos_y][pos_x] = unit

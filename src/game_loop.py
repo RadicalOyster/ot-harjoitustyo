@@ -13,19 +13,20 @@ from pygame.locals import ( # pylint: disable=no-name-in-module
     KEYDOWN,
     QUIT,
 )
-from utility_functions import UnitOnTile
+
 from entities.cursor import CursorState
 from entities.menu_cursor import CharMenuCommands
 from entities.unit import Alignment
+from entities.item import itemNames
+
 from ui.path_indicator import PathIndicator
 from logic.combat import Combat
-from entities.item import itemNames
 
 
 class GameLoop():
     def __init__(self, screen, sprite_renderer, cursor, menu_cursor,
     event_queue, units,movement_display, font, font2, clock, target_selector, camera, level,
-    tile_map):
+    tile_map, ai):
         self.screen = screen
         self.sprite_renderer = sprite_renderer
         self.cursor = cursor
@@ -43,14 +44,34 @@ class GameLoop():
         self.running = True
         self.disable_input = False
         self.tile_map = tile_map
+        self.enemy_ai = ai
+        self.player_phase = True
+        self.enemy_units = []
+
+        for unit in units:
+            if unit.alignment == Alignment.ENEMY:
+                self.enemy_units.append(unit)
 
     def start(self):
         while self.running:
             self.clock.tick(60)
-            # Check if the currently selected tile has a unit on it
-            unit = UnitOnTile(self.cursor.position_x,
-                              self.cursor.position_y, self.units)
-            self._handle_events(unit)
+            # Get unit on currently selected tile
+            unit = self.level.unit_positions[self.cursor.position_y][self.cursor.position_x]
+
+            if self.player_phase:
+                self._handle_events(unit)
+            else:
+                if len(self.enemy_units) > 0:
+                    ticks = self.clock.get_ticks()
+
+                    if ticks % 30 == 0:
+                        ai_unit = self.enemy_units[0]
+                        self.enemy_ai.handle_enemy_turn(ai_unit,
+                        self.camera.offset_x, self.camera.offset_y)
+                        self.enemy_units.remove(ai_unit)
+                else:
+                    self.player_phase = True
+
             self._render(unit)
             self._update_animations()
 
@@ -87,20 +108,25 @@ class GameLoop():
                 elif event.key == K_x:
                     self._handle_cancel()
 
-            # For debugging only!
-            # If C is pressed, reactivate all units
+            # If C is pressed begin enemy turn
                 elif event.key == K_c:
                     for unit_to_activate in self.units:
                         unit_to_activate.activate()
+                    
+                    self.enemy_units = []
+                    for unit in self.units:
+                        if unit.alignment == Alignment.ENEMY:
+                            self.enemy_units.append(unit)
+                    self.player_phase = False
 
     def _select_unit(self, unit):
         self.movement_display.hide_movement = False
         self.movement_display.hide_attack = False
         self.movement_display.update_movement_tiles(
             self.cursor.position_x, self.cursor.position_y, unit, self.level,
-            self.camera.offset_X, self.camera.offset_Y)
+            self.camera.offset_x, self.camera.offset_y)
         self.movement_display.update_attack_tiles(
-            unit, self.camera.offset_X, self.camera.offset_Y)
+            unit, self.camera.offset_x, self.camera.offset_y)
         self.cursor.select_unit(unit)
         self.cursor.selected_unit.old_position_x = self.cursor.selected_unit.position_x
         self.cursor.selected_unit.old_position_y = self.cursor.selected_unit.position_y
@@ -116,10 +142,11 @@ class GameLoop():
         for indicator in indicator_coordinates[:-1]:
             if indicator in self.movement_display.allowed_tiles:
                 self.indicators.add(PathIndicator(
-                    indicator[0], indicator[1], self.camera.offset_X, self.camera.offset_Y))
+                    indicator[0], indicator[1], self.camera.offset_x, self.camera.offset_y))
 
     def _valid_tile(self, col, row):
-        if col < 0 or row < 0 or row > (len(self.level.movement_data) - 1) or col > (len(self.level.movement_data[0]) - 1):
+        if (col < 0 or row < 0 or row > (len(self.level.movement_data) - 1)
+        or col > (len(self.level.movement_data[0]) - 1)):
             return False
         return True
 
@@ -128,7 +155,7 @@ class GameLoop():
         self.movement_display.clear_current_attack_ranges()
         self.cursor.selected_unit.deactivate()
         self.cursor.update_position(self.cursor.selected_unit.position_x,
-            self.cursor.selected_unit.position_y, self.camera.offset_X, self.camera.offset_Y)
+            self.cursor.selected_unit.position_y, self.camera.offset_x, self.camera.offset_y)
         self.cursor.selected_unit = None
         self.cursor.state = CursorState.MAP
         self.menu_cursor.SetCharState()
@@ -136,15 +163,15 @@ class GameLoop():
 
     def _update_offsets(self):
         for unit in self.units:
-            unit.update_offset(self.camera.offset_X, self.camera.offset_Y)
+            unit.update_offset(self.camera.offset_x, self.camera.offset_y)
         for tile in self.movement_display.movement_display:
-            tile.update_offset(self.camera.offset_X, self.camera.offset_Y)
+            tile.update_offset(self.camera.offset_x, self.camera.offset_y)
         for tile in self.movement_display.attack_display:
-            tile.update_offset(self.camera.offset_X, self.camera.offset_Y)
+            tile.update_offset(self.camera.offset_x, self.camera.offset_y)
         for indicator in self.indicators:
-            indicator.update_offset(self.camera.offset_X, self.camera.offset_Y)
+            indicator.update_offset(self.camera.offset_x, self.camera.offset_y)
         for tile in self.tile_map.get_tiles():
-            tile.update_offset(self.camera.offset_X, self.camera.offset_Y)
+            tile.update_offset(self.camera.offset_x, self.camera.offset_y)
 
     # Moves the camera and cursor
 
@@ -152,25 +179,25 @@ class GameLoop():
         if self.cursor.state == CursorState.MAP or self.cursor.state == CursorState.MOVE:
             if (dx == 1 and
             self.cursor.position_x <= len(self.level.movement_data[0]) - 4 and
-            self.cursor.position_x - self.camera.offset_X >= 7):
-                self.camera.offset_X += 1
+            self.cursor.position_x - self.camera.offset_x >= 7):
+                self.camera.offset_x += 1
 
             elif (dx == -1 and
-            self.cursor.position_x - self.camera.offset_X > 0 and
-            self.cursor.position_x - self.camera.offset_X < 3 and
-            self.camera.offset_X > 0):
-                self.camera.offset_X -= 1
+            self.cursor.position_x - self.camera.offset_x > 0 and
+            self.cursor.position_x - self.camera.offset_x < 3 and
+            self.camera.offset_x > 0):
+                self.camera.offset_x -= 1
 
             elif (dy == 1 and
             self.cursor.position_y <= len(self.level.movement_data) - 4 and
-            self.cursor.position_y - self.camera.offset_Y >= 7):
-                self.camera.offset_Y += 1
+            self.cursor.position_y - self.camera.offset_y >= 7):
+                self.camera.offset_y += 1
 
             elif (dy == -1 and
             self.cursor.position_y > 0 and
-            self.cursor.position_y - self.camera.offset_Y < 3 and
-            self.camera.offset_Y > 0):
-                self.camera.offset_Y -= 1
+            self.cursor.position_y - self.camera.offset_y < 3 and
+            self.camera.offset_y > 0):
+                self.camera.offset_y -= 1
 
             if (self.cursor.state != CursorState.CHARMENU and
             self.cursor.state != CursorState.ATTACK and
@@ -182,15 +209,15 @@ class GameLoop():
                 self.cursor.update_position(
                     self.cursor.position_x + dx,
                     self.cursor.position_y + dy,
-                    self.camera.offset_X, self.camera.offset_Y)
+                    self.camera.offset_x, self.camera.offset_y)
 
         elif self.cursor.state == CursorState.MOVE:
             if self._valid_tile(self.cursor.position_x + dx, self.cursor.position_y + dy):
                 self.cursor.update_position(
                     self.cursor.position_x + dx,
                     self.cursor.position_y + dy,
-                    self.camera.offset_X,
-                    self.camera.offset_Y)
+                    self.camera.offset_x,
+                    self.camera.offset_y)
             if (self.cursor.selected_unit is not None and
             (self.cursor.position_x, self.cursor.position_y) in
             self.movement_display.allowed_tiles):
@@ -203,7 +230,7 @@ class GameLoop():
         elif self.cursor.state == CursorState.ATTACK:
             self.target_selector.ScrollSelection(dx + dy)
             self.cursor.update_position(self.target_selector.GetSelection()[0],
-            self.target_selector.GetSelection()[1], self.camera.offset_X, self.camera.offset_Y)
+            self.target_selector.GetSelection()[1], self.camera.offset_x, self.camera.offset_y)
 
         elif self.cursor.state == CursorState.ITEM:
             self.menu_cursor.ScrollItemMenu(
@@ -217,10 +244,14 @@ class GameLoop():
             if unit is None:
                 if ((self.cursor.position_x, self.cursor.position_y) in
                 self.movement_display.get_allowed_tiles()):
-                
+                    self.level.update_unit_position(self.cursor.selected_unit,
+                    self.cursor.position_x, self.cursor.position_y)
+
+
                     self.cursor.selected_unit.update_position(
                     self.cursor.position_x, self.cursor.position_y,
-                    self.camera.offset_X, self.camera.offset_Y)
+                    self.camera.offset_x, self.camera.offset_y)
+
                     self.movement_display.hide_movement = True
                     self.movement_display.hide_attack = True
                     self.indicators.empty()
@@ -239,12 +270,12 @@ class GameLoop():
                         ranges = self.movement_display.get_current_attack_ranges(
                             self.cursor.position_x, self.cursor.position_y,
                             self.cursor.selected_unit.range,
-                            self.camera.offset_X, self.camera.offset_Y)
+                            self.camera.offset_x, self.camera.offset_y)
 
                         self.target_selector.update_tiles(ranges, self.units)
                         self.cursor.update_position(self.target_selector.GetSelection()[0],
                         self.target_selector.GetSelection()[1],
-                        self.camera.offset_X, self.camera.offset_Y)
+                        self.camera.offset_x, self.camera.offset_y)
                         self.sprite_renderer.indicators_active = False
 
                     elif self.menu_cursor.index == CharMenuCommands.ITEM.value:
@@ -265,6 +296,7 @@ class GameLoop():
             elif self.cursor.state == CursorState.ATTACK:
                 dead_unit = Combat(self.cursor.selected_unit, unit)
                 if dead_unit is not None:
+                    self.level.unit_positions[dead_unit.position_y][dead_unit.position_x] = None
                     self.units.remove(dead_unit)
                 self._deactivate_selected_unit()
 
@@ -284,12 +316,17 @@ class GameLoop():
             self.sprite_renderer.hide_indicators()
         elif self.cursor.state == CursorState.CHARMENU:
             self.cursor.state = CursorState.MOVE
+
+            self.level.update_unit_position(self.cursor.selected_unit,
+            self.cursor.selected_unit.old_position_x, self.cursor.selected_unit.old_position_y)
+
             self.cursor.selected_unit.revert_position(
-                self.camera.offset_X, self.camera.offset_Y)
+                self.camera.offset_x, self.camera.offset_y)
+
             self.cursor.update_position(self.cursor.selected_unit.position_x,
                                         self.cursor.selected_unit.position_y,
-                                        self.camera.offset_X,
-                                        self.camera.offset_Y)
+                                        self.camera.offset_x,
+                                        self.camera.offset_y)
             self.movement_display.hide_movement = False
             self.movement_display.hide_attack = False
         elif self.cursor.state == CursorState.ATTACK:
@@ -297,16 +334,16 @@ class GameLoop():
             self.movement_display.clear_current_attack_ranges()
             self.cursor.update_position(self.cursor.selected_unit.position_x,
                                         self.cursor.selected_unit.position_y,
-                                        self.camera.offset_X,
-                                        self.camera.offset_Y)
+                                        self.camera.offset_x,
+                                        self.camera.offset_y)
             self.target_selector.ClearTiles()
         elif self.cursor.state == CursorState.ITEM:
             self.cursor.state = CursorState.CHARMENU
             self.menu_cursor.SetCharState()
             self.cursor.update_position(self.cursor.selected_unit.position_x,
                                         self.cursor.selected_unit.position_y,
-                                        self.camera.offset_X,
-                                        self.camera.offset_Y)
+                                        self.camera.offset_x,
+                                        self.camera.offset_y)
 
     def _render(self, unit):
         self.screen.fill((24, 184, 48))
@@ -418,8 +455,8 @@ class GameLoop():
             self.cursor.state.name, False, (222, 222, 222))
 
         camera_offset = self.font.render(
-            "Offset: (" + str(self.camera.offset_X) + ":" +
-            str(self.camera.offset_Y) + ")", False, (222, 222, 222))
+            "Offset: (" + str(self.camera.offset_x) + ":" +
+            str(self.camera.offset_y) + ")", False, (222, 222, 222))
 
         self.screen.blit(cursor_pos, (560, 4))
         self.screen.blit(cursor_state, (440, 4))

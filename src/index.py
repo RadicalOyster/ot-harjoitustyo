@@ -13,6 +13,7 @@ from entities.cursor import Cursor
 from entities.menu_cursor import MenuCursor
 from entities.level import Level
 
+from logic.ai import Ai
 from logic.pathfinding import PathFinding
 
 from game_loop import GameLoop
@@ -40,21 +41,21 @@ def main():
 
     units = []
     units.append(Unit(1, 4, name="Ferdinand", strength=8, speed=6,
-                 defense=5, offset_X=camera.offset_X, offset_Y=camera.offset_Y))
+                 defense=5, offset_X=camera.offset_x, offset_Y=camera.offset_y))
     units[0].items.append(Item(3, 3, 0))
     units[0].items.append(Item(3, 3, 0))
     units[0].items.append(Item(3, 3, 0))
-    units.append(Unit(1, 5, name="Sylvain", strength=12, speed=2, defense=8, offset_X=camera.offset_X, offset_Y=camera.offset_Y))
+    units.append(Unit(1, 5, name="Sylvain", strength=12, speed=2, defense=8, offset_X=camera.offset_x, offset_Y=camera.offset_y))
     units.append(Unit(3, 6, Alignment.ENEMY,
-                 offset_X=camera.offset_X, offset_Y=camera.offset_Y))
+                 offset_X=camera.offset_x, offset_Y=camera.offset_y))
     units.append(Unit(6, 6, Alignment.ENEMY,
-                 offset_X=camera.offset_X, offset_Y=camera.offset_Y))
+                 offset_X=camera.offset_x, offset_Y=camera.offset_y))
     units.append(Unit(12, 4, Alignment.ENEMY,
-                 offset_X=camera.offset_X, offset_Y=camera.offset_Y))
+                 offset_X=camera.offset_x, offset_Y=camera.offset_y))
     units.append(Unit(9, 7, Alignment.ENEMY,
-                 offset_X=camera.offset_X, offset_Y=camera.offset_Y))
+                 offset_X=camera.offset_x, offset_Y=camera.offset_y))
     units.append(Unit(2, 5, Alignment.ENEMY,
-                 offset_X=camera.offset_X, offset_Y=camera.offset_Y))
+                 offset_X=camera.offset_x, offset_Y=camera.offset_y))
 
     pygame.font.init()
     font = pygame.font.SysFont("Arial", 20)
@@ -86,9 +87,11 @@ def main():
     pathfinding = PathFinding(1, 1, test_level.movement_data)
     target_selector = TargetSelector()
 
-    game_loop = GameLoop(screen, SpriteRenderer(), Cursor(1, 4, camera.offset_X, camera.offset_Y), MenuCursor(),
+    ai = Ai(units, pathfinding, test_level)
+
+    game_loop = GameLoop(screen, SpriteRenderer(), Cursor(1, 4, camera.offset_x, camera.offset_y), MenuCursor(),
                          EventQueue(), units, MovementDisplay(pathfinding), font, font2, clock, target_selector, camera, test_level,
-                         tile_map)
+                         tile_map, ai)
 
     pygame.init()
     game_loop.start()
