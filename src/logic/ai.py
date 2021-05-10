@@ -8,24 +8,25 @@ class Ai():
     def handle_enemy_turn(self, units, pathfinding):
         for unit in units:
             if unit.alignment == Alignment.ENEMY:
-                attack_ranges = self._getAttackTiles(unit, pathfinding)
-                movement_ranges = self._getMovementTiles(unit, pathfinding)
+                attack_ranges = self._get_attack_tiles(unit, pathfinding)
+                movement_ranges = self._get_movement_tiles(unit, pathfinding)
+
+                targets = self._find_enemies(attack_ranges, units)
+
                 
-                targets = self._findEnemies(attack_ranges, units)
 
 
 
-    
-    def _getAttackTiles(self, unit, pathfinding):
+    def _get_attack_tiles(self, unit, pathfinding):
         pathfinding.calculate_distances(unit.position_x, unit.position_y)
         attack_ranges = pathfinding.return_ranges(unit.movement + unit.range)
         return attack_ranges
-    
-    def _getMovementTiles(self, unit, pathfinding):
+
+    def _get_movement_tiles(self, unit, pathfinding):
         movement_ranges = pathfinding.return_ranges(unit.movement)
         return movement_ranges       
-    
-    def _findEnemies(self, tiles, units):
+
+    def _find_enemies(self, tiles, units):
         attack_targets = []
 
         for tile in tiles:
@@ -43,5 +44,14 @@ class Ai():
                     target['neighbors'].append((x_coordinate, y_coordinate - 1))
                     attack_targets.append(target)
                     break
-        
+
         return attack_targets
+    
+    def remove_invalid_targets(self, targets, movement_ranges):
+        culled_target_list = []
+        for target in targets:
+            if not any(tile in target.neighbors for tile in movement_ranges):
+                break
+            else:
+                culled_target_list.append(target)
+        return culled_target_list

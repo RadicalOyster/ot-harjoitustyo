@@ -44,6 +44,7 @@ def main():
     units[0].items.append(Item(3, 3, 0))
     units[0].items.append(Item(3, 3, 0))
     units[0].items.append(Item(3, 3, 0))
+    units.append(Unit(1, 5, name="Sylvain", strength=12, speed=2, defense=8, offset_X=camera.offset_X, offset_Y=camera.offset_Y))
     units.append(Unit(3, 6, Alignment.ENEMY,
                  offset_X=camera.offset_X, offset_Y=camera.offset_Y))
     units.append(Unit(6, 6, Alignment.ENEMY,
@@ -79,12 +80,14 @@ def main():
     test_level = Level(level, units)
     tile_map = TileMap(level)
 
+    test_level.get_movement_data_with_units(True)
+
 
     pathfinding = PathFinding(1, 1, test_level.movement_data)
     target_selector = TargetSelector()
 
     game_loop = GameLoop(screen, SpriteRenderer(), Cursor(1, 4, camera.offset_X, camera.offset_Y), MenuCursor(),
-                         EventQueue(), units, MovementDisplay(pathfinding), font, font2, clock, target_selector, camera, level,
+                         EventQueue(), units, MovementDisplay(pathfinding), font, font2, clock, target_selector, camera, test_level,
                          tile_map)
 
     pygame.init()

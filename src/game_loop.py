@@ -97,11 +97,10 @@ class GameLoop():
         self.movement_display.hide_movement = False
         self.movement_display.hide_attack = False
         self.movement_display.update_movement_tiles(
-            self.cursor.position_x, self.cursor.position_y, unit,
+            self.cursor.position_x, self.cursor.position_y, unit, self.level,
             self.camera.offset_X, self.camera.offset_Y)
         self.movement_display.update_attack_tiles(
-            self.cursor.position_x, self.cursor.position_y, unit,
-            self.camera.offset_X, self.camera.offset_Y)
+            unit, self.camera.offset_X, self.camera.offset_Y)
         self.cursor.select_unit(unit)
         self.cursor.selected_unit.old_position_x = self.cursor.selected_unit.position_x
         self.cursor.selected_unit.old_position_y = self.cursor.selected_unit.position_y
@@ -120,7 +119,7 @@ class GameLoop():
                     indicator[0], indicator[1], self.camera.offset_X, self.camera.offset_Y))
 
     def _valid_tile(self, col, row):
-        if col < 0 or row < 0 or row > (len(self.level) - 1) or col > (len(self.level[0]) - 1):
+        if col < 0 or row < 0 or row > (len(self.level.movement_data) - 1) or col > (len(self.level.movement_data[0]) - 1):
             return False
         return True
 
@@ -152,7 +151,7 @@ class GameLoop():
     def _move_selection(self, dx, dy):
         if self.cursor.state == CursorState.MAP or self.cursor.state == CursorState.MOVE:
             if (dx == 1 and
-            self.cursor.position_x <= len(self.level[0]) - 4 and
+            self.cursor.position_x <= len(self.level.movement_data[0]) - 4 and
             self.cursor.position_x - self.camera.offset_X >= 7):
                 self.camera.offset_X += 1
 
@@ -163,7 +162,7 @@ class GameLoop():
                 self.camera.offset_X -= 1
 
             elif (dy == 1 and
-            self.cursor.position_y <= len(self.level) - 4 and
+            self.cursor.position_y <= len(self.level.movement_data) - 4 and
             self.cursor.position_y - self.camera.offset_Y >= 7):
                 self.camera.offset_Y += 1
 
@@ -216,9 +215,9 @@ class GameLoop():
         if self.cursor.selected_unit is not None:
 
             if unit is None:
-                if (self.cursor.position_x, self.cursor.position_y in
+                if ((self.cursor.position_x, self.cursor.position_y) in
                 self.movement_display.get_allowed_tiles()):
-
+                
                     self.cursor.selected_unit.update_position(
                     self.cursor.position_x, self.cursor.position_y,
                     self.camera.offset_X, self.camera.offset_Y)

@@ -12,7 +12,6 @@ class PathFinding():
     def __init__(self, position_x, position_y, level):
         """Constructor for Pathfinding. Called every time paths are calculated
         in order to initialize the state of the system.
-
         Args:
             position_x: x coordinate of the start position for the algorithm
             position_y: y coordinate of the start position for the algorithm
@@ -24,7 +23,7 @@ class PathFinding():
 
         self.queue = heapdict()
 
-        self.distance = [[50000 for x in range(
+        self.distance = [[sys.maxsize for x in range(
             self.columns)] for y in range(self.rows)]
         self.visited = [[False for x in range(
             self.columns)] for y in range(self.rows)]
@@ -39,7 +38,6 @@ class PathFinding():
 
     def is_valid(self, x, y):
         """Checks if a position is within bounds.
-
         Args:
             x: x coordinate of the node
             y: y coordinate of the node
@@ -50,7 +48,6 @@ class PathFinding():
     def _traverse(self, row, column, destination=(-1, -1)):
         """Check each of the given node's neighbors and add them
         to the queue if they haven't been visited yet. 
-
         Args:
             row: Y coordinate of the node.
             column: X coordinate of the node.
@@ -88,14 +85,13 @@ class PathFinding():
     def return_ranges(self, distance):
         """Returns all nodes within a given distance. Should be used
         after calculating distances.
-
         Args:
             distance: Maximum distance of a node from the start position.
         """
         reachable_spaces = []
         for i in range(0, len(self.level)):
             for j in range(0, len(self.level[0])):
-                if (self.distance[i][j] > distance):
+                if self.distance[i][j] > distance:
                     pass
                 else:
                     reachable_spaces.append((j, i))
@@ -104,7 +100,6 @@ class PathFinding():
     # Returns shortest path to point
     def _construct_path(self, start, destination):
         """Constructs the shortest path between to nodes.
-
         Args:
             start: Starting node
             destination: Destination node
@@ -120,7 +115,6 @@ class PathFinding():
     def return_path(self, start, destination):
         """Runs the algorithm and returns the shortest
         path between two nodes.
-
         Args:
             start: Starting node
             destination: Destination node
@@ -134,15 +128,14 @@ class PathFinding():
 
     # Run the algorithm to determine the distance from the given point to
     # every other point on the map
-    def calculate_distances(self, position_x, position_y):
+    def calculate_distances(self, position_x, position_y, level_data, player_phase=True):
         """Calculates the distance of everyone node to the given node.
-
         Args:
             position_x: X coordinate of the starting node.
             position_y: Y coordinate of the starting node.
         """
-        self.__init__(position_x, position_y, self.level)
-        while not self.path_found and len(self.queue) > 0:
+        self.__init__(position_x, position_y, level_data.get_movement_data_with_units(player_phase))
+        while len(self.queue) > 0:
             head = self.queue.popitem()
             row, column = head[0]
             self._traverse(row, column)
