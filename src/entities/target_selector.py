@@ -39,7 +39,12 @@ class TargetSelector():
         self.tiles_with_units = []
         self.selection = 0
 
-    def _scroll_selection(self, direction):
+    def scroll_selection(self, direction):
+        """
+        Scrolls through the list.
+            Args:
+                direction: direction to scroll
+        """
         if self.selection == 0 and direction == -1:
             self.selection = len(self.tiles_with_units) - 1
         elif self.selection == len(self.tiles_with_units) - 1 and direction == 1:
