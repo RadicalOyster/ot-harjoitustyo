@@ -1,3 +1,7 @@
+"""
+Module for the main game loop.
+"""
+
 import pygame
 #Pylint disabled for this import as it does not recognize
 #the pygame keyboard commands despite the code working as intended
@@ -20,13 +24,21 @@ from entities.unit import Alignment
 from entities.item import itemNames
 
 from ui.path_indicator import PathIndicator
-from logic.combat import Combat
+from logic.combat import combat
 
 
 class GameLoop():
+    """
+    Class representing the main game loop.
+    """
     def __init__(self, screen, sprite_renderer, cursor, menu_cursor,
-    event_queue, units,movement_display, font, font2, clock, target_selector, camera, level,
-    tile_map, ai):
+    event_queue, units, movement_display, font, font2, clock, target_selector, camera, level,
+    tile_map, enemy_ai):
+        """
+        Constructor for the game loop.
+            Args:
+                See the individual modules for details.
+        """
         self.screen = screen
         self.sprite_renderer = sprite_renderer
         self.cursor = cursor
@@ -44,7 +56,7 @@ class GameLoop():
         self.running = True
         self.disable_input = False
         self.tile_map = tile_map
-        self.enemy_ai = ai
+        self.enemy_ai = enemy_ai
         self.player_phase = True
         self.enemy_units = []
 
@@ -53,13 +65,16 @@ class GameLoop():
                 self.enemy_units.append(unit)
 
     def start(self):
+        """
+        Initiates the main game loop.
+        """
         while self.running:
             self.clock.tick(60)
             # Get unit on currently selected tile
-            unit = self.level.unit_positions[self.cursor.position_y][self.cursor.position_x]
+            current_unit = self.level.unit_positions[self.cursor.position_y][self.cursor.position_x]
 
             if self.player_phase:
-                self._handle_events(unit)
+                self._handle_events(current_unit)
             else:
                 if len(self.enemy_units) > 0:
                     ticks = self.clock.get_ticks()
@@ -72,10 +87,10 @@ class GameLoop():
                 else:
                     self.player_phase = True
 
-            self._render(unit)
+            self._render(current_unit)
             self._update_animations()
 
-    def _handle_events(self, unit):
+    def _handle_events(self, current_unit):
         events = self.event_queue.get()
 
         for event in events:
@@ -102,7 +117,7 @@ class GameLoop():
 
             # Handle Z key press
                 elif event.key == K_z:
-                    self._handle_confirm(unit)
+                    self._handle_confirm(current_unit)
 
             # If X is pressed, clear selected unit
                 elif event.key == K_x:
@@ -112,22 +127,22 @@ class GameLoop():
                 elif event.key == K_c:
                     for unit_to_activate in self.units:
                         unit_to_activate.activate()
-                    
+
                     self.enemy_units = []
                     for unit in self.units:
                         if unit.alignment == Alignment.ENEMY:
                             self.enemy_units.append(unit)
                     self.player_phase = False
 
-    def _select_unit(self, unit):
+    def _select_unit(self, current_unit):
         self.movement_display.hide_movement = False
         self.movement_display.hide_attack = False
         self.movement_display.update_movement_tiles(
-            self.cursor.position_x, self.cursor.position_y, unit, self.level,
+            self.cursor.position_x, self.cursor.position_y, current_unit, self.level,
             self.camera.offset_x, self.camera.offset_y)
         self.movement_display.update_attack_tiles(
-            unit, self.camera.offset_x, self.camera.offset_y)
-        self.cursor.select_unit(unit)
+            current_unit, self.camera.offset_x, self.camera.offset_y)
+        self.cursor.select_unit(current_unit)
         self.cursor.selected_unit.old_position_x = self.cursor.selected_unit.position_x
         self.cursor.selected_unit.old_position_y = self.cursor.selected_unit.position_y
         self.cursor.state = CursorState.MOVE
@@ -159,7 +174,7 @@ class GameLoop():
         self.cursor.selected_unit = None
         self.cursor.state = CursorState.MAP
         self.menu_cursor.SetCharState()
-        self.target_selector.ClearTiles()
+        self.target_selector.clear_tiles()
 
     def _update_offsets(self):
         for unit in self.units:
@@ -175,25 +190,25 @@ class GameLoop():
 
     # Moves the camera and cursor
 
-    def _move_selection(self, dx, dy):
+    def _move_selection(self, d_x, d_y):
         if self.cursor.state == CursorState.MAP or self.cursor.state == CursorState.MOVE:
-            if (dx == 1 and
+            if (d_x == 1 and
             self.cursor.position_x <= len(self.level.movement_data[0]) - 4 and
             self.cursor.position_x - self.camera.offset_x >= 7):
                 self.camera.offset_x += 1
 
-            elif (dx == -1 and
+            elif (d_x == -1 and
             self.cursor.position_x - self.camera.offset_x > 0 and
             self.cursor.position_x - self.camera.offset_x < 3 and
             self.camera.offset_x > 0):
                 self.camera.offset_x -= 1
 
-            elif (dy == 1 and
+            elif (d_y == 1 and
             self.cursor.position_y <= len(self.level.movement_data) - 4 and
             self.cursor.position_y - self.camera.offset_y >= 7):
                 self.camera.offset_y += 1
 
-            elif (dy == -1 and
+            elif (d_y == -1 and
             self.cursor.position_y > 0 and
             self.cursor.position_y - self.camera.offset_y < 3 and
             self.camera.offset_y > 0):
@@ -205,17 +220,17 @@ class GameLoop():
                 self._update_offsets()
 
         if self.cursor.state == CursorState.MAP:
-            if self._valid_tile(self.cursor.position_x + dx, self.cursor.position_y + dy):
+            if self._valid_tile(self.cursor.position_x + d_x, self.cursor.position_y + d_y):
                 self.cursor.update_position(
-                    self.cursor.position_x + dx,
-                    self.cursor.position_y + dy,
+                    self.cursor.position_x + d_x,
+                    self.cursor.position_y + d_y,
                     self.camera.offset_x, self.camera.offset_y)
 
         elif self.cursor.state == CursorState.MOVE:
-            if self._valid_tile(self.cursor.position_x + dx, self.cursor.position_y + dy):
+            if self._valid_tile(self.cursor.position_x + d_x, self.cursor.position_y + d_y):
                 self.cursor.update_position(
-                    self.cursor.position_x + dx,
-                    self.cursor.position_y + dy,
+                    self.cursor.position_x + d_x,
+                    self.cursor.position_y + d_y,
                     self.camera.offset_x,
                     self.camera.offset_y)
             if (self.cursor.selected_unit is not None and
@@ -225,23 +240,23 @@ class GameLoop():
 
         elif self.cursor.state == CursorState.CHARMENU:
             self.menu_cursor.ScrollCharMenu(
-                self.menu_cursor.GetCommands(), self.menu_cursor.index + dy)
+                self.menu_cursor.GetCommands(), self.menu_cursor.index + d_y)
 
         elif self.cursor.state == CursorState.ATTACK:
-            self.target_selector.ScrollSelection(dx + dy)
-            self.cursor.update_position(self.target_selector.GetSelection()[0],
-            self.target_selector.GetSelection()[1], self.camera.offset_x, self.camera.offset_y)
+            self.target_selector.ScrollSelection(d_x + d_y)
+            self.cursor.update_position(self.target_selector.get_selection()[0],
+            self.target_selector.get_selection()[1], self.camera.offset_x, self.camera.offset_y)
 
         elif self.cursor.state == CursorState.ITEM:
             self.menu_cursor.ScrollItemMenu(
-                self.cursor.selected_unit.items, self.menu_cursor.index + dy)
+                self.cursor.selected_unit.items, self.menu_cursor.index + d_y)
 
-    def _handle_confirm(self, unit):
+    def _handle_confirm(self, current_unit):
         # If player has selected a unit and presses Z on an empty tile in range, move unit
         # If the selected unit is the same as the unit on that tile, change cursor state to CHARMENU
         if self.cursor.selected_unit is not None:
 
-            if unit is None:
+            if current_unit is None:
                 if ((self.cursor.position_x, self.cursor.position_y) in
                 self.movement_display.get_allowed_tiles()):
                     self.level.update_unit_position(self.cursor.selected_unit,
@@ -258,7 +273,7 @@ class GameLoop():
                     self.cursor.state = CursorState.CHARMENU
 
             # If already in CHARMENU, button confirms menu selection
-            elif unit == self.cursor.selected_unit:
+            elif current_unit == self.cursor.selected_unit:
                 if self.cursor.state == CursorState.CHARMENU:
 
                     if self.menu_cursor.index == CharMenuCommands.WAIT.value:
@@ -273,8 +288,8 @@ class GameLoop():
                             self.camera.offset_x, self.camera.offset_y)
 
                         self.target_selector.update_tiles(ranges, self.units)
-                        self.cursor.update_position(self.target_selector.GetSelection()[0],
-                        self.target_selector.GetSelection()[1],
+                        self.cursor.update_position(self.target_selector.get_selection()[0],
+                        self.target_selector.get_selection()[1],
                         self.camera.offset_x, self.camera.offset_y)
                         self.sprite_renderer.indicators_active = False
 
@@ -294,7 +309,7 @@ class GameLoop():
                     self.movement_display.hide_attack = True
 
             elif self.cursor.state == CursorState.ATTACK:
-                dead_unit = Combat(self.cursor.selected_unit, unit)
+                dead_unit = combat(self.cursor.selected_unit, current_unit)
                 if dead_unit is not None:
                     self.level.unit_positions[dead_unit.position_y][dead_unit.position_x] = None
                     self.units.remove(dead_unit)
@@ -303,8 +318,9 @@ class GameLoop():
             # If player has not selected a unit and there is a unit on the tile,
             # select that unit if it is an active ally and display its movement range
         else:
-            if unit is not None and unit.alignment is Alignment.ALLY and unit.has_moved is False:
-                self._select_unit(unit)
+            if (current_unit is not None and current_unit.alignment is
+            Alignment.ALLY and not current_unit.has_moved):
+                self._select_unit(current_unit)
 
     def _handle_cancel(self):
         self.menu_cursor.SetCharState()
@@ -336,7 +352,7 @@ class GameLoop():
                                         self.cursor.selected_unit.position_y,
                                         self.camera.offset_x,
                                         self.camera.offset_y)
-            self.target_selector.ClearTiles()
+            self.target_selector.clear_tiles()
         elif self.cursor.state == CursorState.ITEM:
             self.cursor.state = CursorState.CHARMENU
             self.menu_cursor.SetCharState()
@@ -345,7 +361,7 @@ class GameLoop():
                                         self.camera.offset_x,
                                         self.camera.offset_y)
 
-    def _render(self, unit):
+    def _render(self, current_unit):
         self.screen.fill((24, 184, 48))
         self.sprite_renderer.update(self.units, self.indicators,
         self.movement_display.get_movement_range(),
@@ -363,9 +379,9 @@ class GameLoop():
         # currently selected, display its info
         # To do: refactor
         show_unit_display = False
-        if unit is not None or self.cursor.selected_unit is not None:
+        if current_unit is not None or self.cursor.selected_unit is not None:
             unit_display = pygame.Surface((164, 64))
-            if (unit is not None and unit.alignment == Alignment.ENEMY):
+            if (current_unit is not None and current_unit.alignment == Alignment.ENEMY):
                 unit_display.fill((154, 18, 4))
             else:
                 unit_display.fill((24, 48, 184))
@@ -388,19 +404,19 @@ class GameLoop():
                 unit_speed = self.font2.render(
                     "SPD: " + str(self.cursor.selected_unit.speed), False, (222, 222, 222))
 
-            elif unit is not None:
+            elif current_unit is not None:
                 show_unit_display = True
                 unit_name = self.font.render(
-                    str(unit.name), False, (222, 222, 222))
+                    str(current_unit.name), False, (222, 222, 222))
 
                 unit_hp = self.font.render(
-                    "HP: " + str(unit.current_hp) + "/" + str(unit.max_hp), False, (222, 222, 222))
+                    "HP: " + str(current_unit.current_hp) + "/" + str(current_unit.max_hp), False, (222, 222, 222))
                 unit_attack = self.font2.render(
-                    "STR: " + str(unit.strength), False, (222, 222, 222))
+                    "STR: " + str(current_unit.strength), False, (222, 222, 222))
                 unit_defense = self.font2.render(
-                    "DEF: " + str(unit.defense), False, (222, 222, 222))
+                    "DEF: " + str(current_unit.defense), False, (222, 222, 222))
                 unit_speed = self.font2.render(
-                    "SPD: " + str(unit.speed), False, (222, 222, 222))
+                    "SPD: " + str(current_unit.speed), False, (222, 222, 222))
 
             if show_unit_display:
                 unit_display.blit(unit_name, (10, 4))
@@ -411,7 +427,7 @@ class GameLoop():
                 self.screen.blit(unit_display, (10, 5))
 
         # If in character menu, draw menu
-        # Refactor
+        # TO DO: Refactor
         if self.cursor.state == CursorState.CHARMENU:
             available_commands = self.menu_cursor.GetCommands()
 

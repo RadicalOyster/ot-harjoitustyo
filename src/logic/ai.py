@@ -1,14 +1,38 @@
+"""
+A module for handling the enemy AI.
+"""
 import random
 from entities.unit import Alignment
-from logic.combat import Combat
+from logic.combat import combat
 
 class Ai():
+    """
+    A class containing the enemy AI.
+    """
     def __init__(self, units, pathfinding, level):
+        """
+        Constructor for the ai.
+
+            Args:
+                units: a list of units on the map
+                pathfinding: an instance of Pathfinding
+                level: a level containing the map data
+
+        """
         self.units = units
         self.pathfinding = pathfinding
-        self.level = level    
+        self.level = level
 
     def handle_enemy_turn(self, unit, offset_x=0, offset_y=0):
+        """
+        A method for handling a unit's turn. Attack a random player unit
+        in range or moves to a random available space.
+
+            Args:
+                unit: the unit whose turn it is.
+                offset_x: the current horizontal camera offset
+                offset_y: the current vertical camera offset
+        """
         movement_ranges = self._get_movement_tiles(unit, self.pathfinding, self.level)
         attack_ranges = self._get_attack_tiles(unit, movement_ranges)
         targets = self._find_enemies(attack_ranges, self.level)
@@ -24,7 +48,7 @@ class Ai():
             square_to_move_to[1])
             unit.update_position(square_to_move_to[0],
             square_to_move_to[1], offset_x, offset_y)
-            dead_unit = Combat(unit, chosen_target)
+            dead_unit = combat(unit, chosen_target)
             if dead_unit is not None:
                 self.level.unit_positions[dead_unit.position_y][dead_unit.position_x] = None
                 self.units.remove(dead_unit)

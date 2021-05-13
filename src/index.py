@@ -30,32 +30,31 @@ sys.path.insert(0, parentdir)
 
 # Initializing the game
 
-
 def main():
-    SCREEN_WIDTH = 640
-    SCREEN_HEIGHT = 640
-    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    screen_width = 640
+    screen_height = 640
+    screen = pygame.display.set_mode((screen_width, screen_height))
     pygame.display.set_caption("Faux Emblem")
 
     camera = Camera(0, 0)
 
     units = []
     units.append(Unit(1, 4, name="Ferdinand", strength=8, speed=6,
-                 defense=5, offset_X=camera.offset_x, offset_Y=camera.offset_y))
+                 defense=5, offset_x=camera.offset_x, offset_y=camera.offset_y))
     units[0].items.append(Item(3, 3, 0))
     units[0].items.append(Item(3, 3, 0))
     units[0].items.append(Item(3, 3, 0))
-    units.append(Unit(1, 5, name="Sylvain", strength=12, speed=2, defense=8, offset_X=camera.offset_x, offset_Y=camera.offset_y))
+    units.append(Unit(1, 5, name="Sylvain", strength=12, speed=2, defense=8, offset_x=camera.offset_x, offset_y=camera.offset_y))
     units.append(Unit(3, 6, Alignment.ENEMY,
-                 offset_X=camera.offset_x, offset_Y=camera.offset_y))
+                 offset_x=camera.offset_x, offset_y=camera.offset_y))
     units.append(Unit(6, 6, Alignment.ENEMY,
-                 offset_X=camera.offset_x, offset_Y=camera.offset_y))
+                 offset_x=camera.offset_x, offset_y=camera.offset_y))
     units.append(Unit(12, 4, Alignment.ENEMY,
-                 offset_X=camera.offset_x, offset_Y=camera.offset_y))
+                 offset_x=camera.offset_x, offset_y=camera.offset_y))
     units.append(Unit(9, 7, Alignment.ENEMY,
-                 offset_X=camera.offset_x, offset_Y=camera.offset_y))
+                 offset_x=camera.offset_x, offset_y=camera.offset_y))
     units.append(Unit(2, 5, Alignment.ENEMY,
-                 offset_X=camera.offset_x, offset_Y=camera.offset_y))
+                 offset_x=camera.offset_x, offset_y=camera.offset_y))
 
     pygame.font.init()
     font = pygame.font.SysFont("Arial", 20)
@@ -87,11 +86,13 @@ def main():
     pathfinding = PathFinding(1, 1, test_level.movement_data)
     target_selector = TargetSelector()
 
-    ai = Ai(units, pathfinding, test_level)
+    enemy_ai = Ai(units, pathfinding, test_level)
 
-    game_loop = GameLoop(screen, SpriteRenderer(), Cursor(1, 4, camera.offset_x, camera.offset_y), MenuCursor(),
-                         EventQueue(), units, MovementDisplay(pathfinding), font, font2, clock, target_selector, camera, test_level,
-                         tile_map, ai)
+    game_loop = GameLoop(screen, SpriteRenderer(), Cursor(1, 4, camera.offset_x,
+                        camera.offset_y), MenuCursor(),
+                         EventQueue(), units, MovementDisplay(pathfinding),
+                         font, font2, clock, target_selector, camera, test_level,
+                         tile_map, enemy_ai)
 
     pygame.init()
     game_loop.start()

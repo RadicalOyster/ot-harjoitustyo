@@ -87,6 +87,8 @@ class PathFinding():
         after calculating distances.
         Args:
             distance: Maximum distance of a node from the start position.
+        Returns:
+            A list of reachable tiles in the format (x,y).
         """
         reachable_spaces = []
         for i in range(0, len(self.level)):
@@ -103,6 +105,9 @@ class PathFinding():
         Args:
             start: Starting node
             destination: Destination node
+        Returns:
+            A list of nodes representing the path from the start node to the
+            destination node.
         """
         path = []
         current_node = destination
@@ -118,6 +123,9 @@ class PathFinding():
         Args:
             start: Starting node
             destination: Destination node
+        Returns:
+            A list of nodes representing the path from the start node to the
+            destination node.
         """
         self.__init__(start[0], start[1], self.level)
         while not self.path_found and len(self.queue) > 0:

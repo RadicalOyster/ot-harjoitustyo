@@ -22,8 +22,8 @@ class TileMap(pygame.sprite.Sprite):
                     tile_image = load_image("peak.png")
                 else:
                     tile_image = load_image("plain.png")
-                        
+
                 self.tile_map.add(MapTile(tile_image, j, i, 0, 0))
-    
+
     def get_tiles(self):
         return self.tile_map

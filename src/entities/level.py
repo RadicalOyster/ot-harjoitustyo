@@ -1,11 +1,14 @@
+"""
+A module for creating in-game levels.
+"""
 import sys
-from enum import Enum
 from entities.unit import Alignment
 
 movement_costs = [1, sys.maxsize]
 
 class Level():
-    """A class containing level data.
+    """
+    A class containing level data.
     """
     def __init__(self, level_data, units):
         """Constructor for level.
