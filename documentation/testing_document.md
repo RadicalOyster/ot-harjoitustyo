@@ -10,7 +10,7 @@ though some testing has been performed on Linux as well.
 
 Excluding ui elements and the main game loop, which would be cumbersome to test automatically and primarily relies on components that have been individually tested, the automated unit tests cover 77% of branches.
 
-<img src="">
+<img src="https://github.com/RadicalOyster/ot-harjoitustyo/blob/master/images/test%20coverage.png">
 
 ## Installation
 
