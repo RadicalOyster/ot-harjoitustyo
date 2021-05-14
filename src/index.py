@@ -44,7 +44,7 @@ def main():
     units[0].items.append(Item(3, 3, 0))
     units[0].items.append(Item(3, 3, 0))
     units[0].items.append(Item(3, 3, 0))
-    units.append(Unit(1, 5, name="Sylvain", strength=12, speed=2, defense=8, offset_x=camera.offset_x, offset_y=camera.offset_y))
+    units.append(Unit(1, 5, name="Sylvain", strength=4, speed=2, defense=8, offset_x=camera.offset_x, offset_y=camera.offset_y))
     units.append(Unit(3, 6, Alignment.ENEMY,
                  offset_x=camera.offset_x, offset_y=camera.offset_y))
     units.append(Unit(6, 6, Alignment.ENEMY,

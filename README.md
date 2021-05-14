@@ -2,20 +2,23 @@
 
 ![](https://github.com/RadicalOyster/ot-harjoitustyo/blob/master/images/interface_2.png)
 
-# Generic strategy game
+# Faux Emblem
 This project is a simple turn based strategy game inspired by [Fire Emblem](https://en.wikipedia.org/wiki/Fire_Emblem:_Shadow_Dragon_and_the_Blade_of_Light). See links below for documentation.
 
 # Links
 
-[Project specifications](https://github.com/RadicalOyster/ot-harjoitustyo/blob/master/documentation/project%20specifications.mkd)
+[Project specifications](https://github.com/RadicalOyster/ot-harjoitustyo/blob/master/documentation/project%20specifications.md)
 
-[Timekeeping](https://github.com/RadicalOyster/ot-harjoitustyo/blob/master/documentation/time%20spent.mkd)
+[User guide](https://github.com/RadicalOyster/ot-harjoitustyo/blob/master/documentation/user%20guide.md)
+
+[Timekeeping](https://github.com/RadicalOyster/ot-harjoitustyo/blob/master/documentation/time%20spent.md)
 
 [Project architecture](https://github.com/RadicalOyster/ot-harjoitustyo/blob/master/documentation/arkkitehtuuri.md)
 
 ## Releases
 * [Release 1](https://github.com/RadicalOyster/ot-harjoitustyo/releases/tag/viikko5)
 * [Release 2](https://github.com/RadicalOyster/ot-harjoitustyo/releases/tag/viikko6)
+* [Final release]()
 
 ## Compatibility
 

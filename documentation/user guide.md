@@ -1,12 +1,4 @@
-# Project Specifications
-
-## Purpose of the application
-
-This is a simple grid-based strategy game in the vein of [Fire Emblem](https://en.wikipedia.org/wiki/Fire_Emblem:_Shadow_Dragon_and_the_Blade_of_Light). The player takes turns with the AI to guide their units in battle against the opposing army. 
-
-## Users
-
-Being a simple single player game with no login capabilities or private user data, the application has no need for different user roles.
+# User Guide
 
 ## User interface and the basics of gameplay
 
@@ -50,29 +42,14 @@ a better view of the battlefield.
 
 <img src="https://github.com/RadicalOyster/ot-harjoitustyo/blob/master/images/interface_8.png">
 
-## Resetting your units
+## Ending your turn
 
-For testing purposes until enemy AI has been implemented, the C key will reactivate all inactive units.
+Whether all your units have acted or not, when you wish to end your turn, pressing the C key will begin the enemy phase during which the AI takes control
+of enemy units to move around the map or attack your units.
 
-## Basic functionality
+## A note on movement
 
-* Cursor movement and unit selection
-* Allied units under the player's control and enemy units
-* Units with individual stats
-* Basic combat (units can engage in battle and disappear from the map if their hit points drop to 0)
-* Pathfinding and display for units' movement- and attack ranges (utilizes Dijkstra's algorithm)
-* Terrain with varying movement costs
-* Scrolling camera
-* UI elements to allow the player to inspect a unit's attributes in detail
-* Basic unit inventory system
+As seen in the image below, player units cannot move through enemy units, but ally units do not hinder your unit's movement although two units still cannot
+occupy the same space. This applies for enemy units as well, who may move freely through other enemy units while player units will impede their movement.
 
-
-### Not yet implemented
-* Basic AI to control enemy actions
-
-## Features for future development
-
-After basic functionality has been implemented, work will begin on the following features if time allows it:
-* Equipment system allowing units to swap between different types of weapons
-* Varying terrain movement cost depending on unit type (eg. cavalry might sufffer a movement penalty moving through marsh land while infarnty can move unimpeded)
-* Experience and level up system to allow characters to grow
+<img src="https://github.com/RadicalOyster/ot-harjoitustyo/blob/master/images/interface_9.png">

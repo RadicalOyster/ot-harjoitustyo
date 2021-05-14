@@ -34,15 +34,17 @@ class Ai():
                 offset_y: the current vertical camera offset
         """
         movement_ranges = self._get_movement_tiles(unit, self.pathfinding, self.level)
+        print(movement_ranges)
         attack_ranges = self._get_attack_tiles(unit, movement_ranges)
         targets = self._find_enemies(attack_ranges, self.level)
 
         if len(targets) > 0:
             chosen_target = random.choice(targets)
-            valid_tiles = self._tiles_to_attack_from(unit, chosen_target)
-            for tile in valid_tiles:
-                if tile not in movement_ranges:
-                    valid_tiles.remove(tile)
+            attack_tiles = self._tiles_to_attack_from(unit, chosen_target)
+            valid_tiles = []
+            for tile in attack_tiles:
+                if tile in movement_ranges:
+                    valid_tiles.append(tile)
             square_to_move_to = self._choose_square_to_move_to(valid_tiles, self.level)
             self.level.update_unit_position(unit, square_to_move_to[0],
             square_to_move_to[1])
@@ -61,6 +63,7 @@ class Ai():
             square_to_move_to[1], offset_x, offset_y)
 
     def _choose_square_to_move_to(self, tiles, level):
+        print("Given the tiles ", tiles)
         square_to_move_to = random.choice(tiles)
         while (level.unit_positions[square_to_move_to[1]][square_to_move_to[0]]
         is not None):
