@@ -1,7 +1,6 @@
 import unittest
 import os
 import sys
-import inspect
 from entities.unit import Unit
 from logic.combat import _return_attack_order, combat
 sys.path.append(os.path.join(os.path.dirname(sys.path[0]), 'entities'))

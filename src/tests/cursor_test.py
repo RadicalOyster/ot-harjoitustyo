@@ -3,7 +3,6 @@ from entities.cursor import Cursor, CursorState
 import unittest
 import os
 import sys
-import inspect
 sys.path.append(os.path.join(os.path.dirname(sys.path[0]), 'entities'))
 
 
