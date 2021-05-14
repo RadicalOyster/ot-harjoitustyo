@@ -3,7 +3,8 @@ The game has been tested with automatic unit testing as well as extensive manual
 
 # Unit Testing
 
-Automatic tests have been written for most classes in the logic and entities packages. Many of these tests involve the integration of multiple different classes.
+Automatic tests have been written for most classes in the logic and entities packages. Many of these tests involve the integration of multiple different classes. Manual testing was mostly performed on Windows 10,
+though some testing has been performed on Linux as well.
 
 ## Test Coverage
 
