@@ -23,5 +23,8 @@
 | 20.4  | 3    | added tests, invoke command for test coverage and pylint rules and began to clean up code
 | 27.4  | 2    | added functionality to support maps with varying tiles with their own movement cost and graphics
 | 27.4  | 2    | bug fixing, code cleanup and tests
-| 04.05 | 4    | Updated documentation, added docstring comments and began work on enemy AI.      | 
-| total | 63   | | 
+| 04.05 | 4    | Updated documentation, added docstring comments and began work on enemy AI.      |
+| 10.05 | 5    | Updated pathfinding, added AI
+| 11.05 | 4    | Code cleanup and bug fixing
+| 14.05 | 3    | Testing and documentation
+| total | 75   | | 
